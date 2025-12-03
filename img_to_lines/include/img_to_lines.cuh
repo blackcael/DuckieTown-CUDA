@@ -33,20 +33,26 @@
 #define YELLOW_EROSION_SIZE 3
 
 #define BLUR_MASK_SIZE 3
+#define BLUR_MASK_LENGTH BLUR_MASK_SIZE * BLUR_MASK_SIZE
+#define GAUSSIAN_BLUR_ARRAY {1.0f,2.0f,1.0f,2.0f,4.0f,2.0f,1.0f,2.0f,1.0f}
+#define GAUSSIAN_DENOMINATOR 16
+
 #define SOBLE_MASK_SIZE 3
+#define SOBLE_MASK_LENGTH SOBLE_MASK_SIZE * SOBLE_MASK_SIZE
+#define SOBLE_MASK_ARRAY_X {-1, 0, 1, -2, 0, 2, -1, 0, 1}
+#define SOBLE_MASK_ARRAY_Y {1, 2, 1, 0, 0, 0, -1, -2, -1}
 
 #define CANNY_THRESH_HIGH 100
 #define CANNY_THRESH_LOW 0
 
+
 void img_to_lines_kernel(
     char* pixel_array, 
-    uint8_t image_height, 
-    uint8_t image_width,
-    uint8_t* gaussian_kernel,
-    uint8_t gaussian_denominator,
+    int image_height, 
+    int image_width,
+    char gaussian_denominator,
     char* filter_ws,
-    float* blur_ws_x,
-    float* blur_ws_y,
+    float* blur_ws,
     float* mag2_ws,
     char* yellow_out,
     char* white_out

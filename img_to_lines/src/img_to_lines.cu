@@ -2,8 +2,6 @@
 #include <math.h>
 #include "img_to_lines.cuh"
 #define TILE_WIDTH 16
-#define BLOCK_SIZE_X TILE_WIDTH // tweak for performance
-#define BLOCK_SIZE_Y TILE_WIDTH // tweak for performance
 #define NUM_CHANNELS 3
 
 // Macros
@@ -46,13 +44,11 @@ Arguments:
 
 __global__ void img_to_lines_kernel(
     char* pixel_array, 
-    uint8_t image_height, 
-    uint8_t image_width,
-    uint8_t* gaussian_kernel,
-    uint8_t gaussian_denominator,
+    int image_height, 
+    int image_width,
+    float gaussian_denominator,
     char* filter_ws,
-    float* blur_ws_x,
-    float* blur_ws_y,
+    float* blur_ws,
     float* mag2_ws,
     char* yellow_out,
     char* white_out
@@ -188,12 +184,12 @@ __global__ void img_to_lines_kernel(
     }
     // ### Goal 2.0 Canny Edge Detection
     // subGoal 2.1 Convert to GrayScale
-    float gray_u8 = V;
-    __syncthreads();
-    filter_ws[pixelIndex] = gray_u8;
+    float gray_f = V;
+    blur_ws[pixelIndex] = gray_f;
     
     // subGoal 2.2 Gaussian Blur
     __syncthreads();
+    float gaussian_kernel[BLUR_MASK_LENGTH] = GAUSSIAN_BLUR_ARRAY;
     float gauss_sum = 0;
     for(int i = 0; i < BLUR_MASK_SIZE; i++){
         int erode_row = rowIndex - BLUR_MASK_SIZE/2 + i;
@@ -205,19 +201,20 @@ __global__ void img_to_lines_kernel(
                 erode_col <= image_width &&
                 erode_row <= image_height
             ){
-                gauss_sum += gaussian_kernel[i * BLUR_MASK_SIZE + j] * filter_ws[erode_row * image_width + erode_col];
+                gauss_sum += gaussian_kernel[i * BLUR_MASK_SIZE + j] * blur_ws[erode_row * image_width + erode_col];
             }else{
-                gauss_sum += gaussian_kernel[i * BLUR_MASK_SIZE + j] * filter_ws[pixelIndex];
+                gauss_sum += gaussian_kernel[i * BLUR_MASK_SIZE + j] * blur_ws[pixelIndex];
             }
         }
     }
     __syncthreads();
-    gray_u8 = gauss_sum / gaussian_denominator;
-    filter_ws[pixelIndex] = gray_u8;
+    gray_f = gauss_sum / gaussian_denominator;
+    blur_ws[pixelIndex] = gray_f;
     __syncthreads();
+
     // subGoal 2.2 Run Canny Kernel
-    int8_t soble_kernel_x[9] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
-    int8_t soble_kernel_y[9] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
+    int8_t soble_kernel_x[SOBLE_MASK_LENGTH] = SOBLE_MASK_ARRAY_X;
+    int8_t soble_kernel_y[SOBLE_MASK_LENGTH] = SOBLE_MASK_ARRAY_Y;
     float soble_sum_x = 0;
     float soble_sum_y = 0;
     float filter_val;
@@ -231,12 +228,13 @@ __global__ void img_to_lines_kernel(
                 erode_col <= image_width &&
                 erode_row <= image_height
             ){
-                filter_val = filter_ws[erode_row * image_width + erode_col];
+                filter_val = blur_ws[erode_row * image_width + erode_col];
                 soble_sum_x += soble_kernel_x[i * SOBLE_MASK_SIZE + j] * filter_val;
                 soble_sum_y += soble_kernel_y[i * SOBLE_MASK_SIZE + j] * filter_val;
             }else{
-                soble_sum_x += soble_kernel_x[i * SOBLE_MASK_SIZE + j] * gray_u8;
-                soble_sum_y += soble_kernel_y[i * SOBLE_MASK_SIZE + j] * gray_u8;
+                // If outside of boundaries, filterval = centerpoint, which is this pixels gray_f
+                soble_sum_x += soble_kernel_x[i * SOBLE_MASK_SIZE + j] * gray_f;
+                soble_sum_y += soble_kernel_y[i * SOBLE_MASK_SIZE + j] * gray_f;
             }
         }
     }
@@ -297,6 +295,9 @@ __global__ void img_to_lines_kernel(
     // ### Goal 3.0 AND the Color Masks and the Canny Edge Detection
     char isYellowEdge = ((edge_strength_discrete == 2) && (isYELLOW_WHITE & YELLOW_MASK)) ? 0xF0 : 0x00;
     char isWhiteEdge = ((edge_strength_discrete == 2) && (isYELLOW_WHITE & WHITE_MASK)) ? 0x0F : 0x00;
+
+    yellow_out[pixelIndex] = isYellowEdge ? 0xFF : 0x00;
+    white_out[pixelIndex] = isWhiteEdge ? 0xFF : 0x00;
 
     // ### Goal 4.0  Each thread gets to do one best lines calc
 
