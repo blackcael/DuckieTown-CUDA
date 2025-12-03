@@ -1,13 +1,14 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 // - pixels is width * height * 3 bytes
 // - Layout is row-major, interleaved RGB:
 //   pixel (x, y) starts at index (y * width + x) * 3
 //   R = pixels[idx + 0], G = pixels[idx + 1], B = pixels[idx + 2]
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
     int width;       // image width in pixels
@@ -30,5 +31,10 @@ Image image_utils_load_image(
 void image_utils_free_image(
     Image* img
 );
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif //UTILS_H

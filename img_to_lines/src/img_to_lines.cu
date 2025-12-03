@@ -130,7 +130,7 @@ __global__ void img_to_lines_kernel(
     // Assemble mask
     for(int i = 0; i < MAX_COLOR_MASK_SIZE; i++){
         int erode_row = rowIndex - MAX_COLOR_MASK_SIZE/2 + i;
-        for(int j; j< MAX_COLOR_MASK_SIZE; j++){
+        for(int j = 0; j< MAX_COLOR_MASK_SIZE; j++){
             int erode_col = colIndex - MAX_COLOR_MASK_SIZE/2 + i;
             // check if index is valid
             if (erode_col >= 0 && 
@@ -144,9 +144,9 @@ __global__ void img_to_lines_kernel(
             }
         }
     }
-
+    int start_idx;
     // ERODE YELLOW
-    int start_idx = (MAX_COLOR_MASK_SIZE - YELLOW_EROSION_SIZE)/2;
+    start_idx = (MAX_COLOR_MASK_SIZE - YELLOW_EROSION_SIZE)/2;
     for(int i = start_idx; i < start_idx + YELLOW_EROSION_SIZE; i++){
         for(int j = start_idx; j < start_idx + YELLOW_EROSION_SIZE; j++){
             if(maskArray[i][j] != INVALID_MASK){
@@ -155,7 +155,7 @@ __global__ void img_to_lines_kernel(
         }
     }
     // DILATE YELLOW
-    int start_idx = (MAX_COLOR_MASK_SIZE - YELLOW_DILATION_SIZE)/2;
+    start_idx = (MAX_COLOR_MASK_SIZE - YELLOW_DILATION_SIZE)/2;
     for(int i = start_idx; i < start_idx + YELLOW_DILATION_SIZE; i++){
         for(int j = start_idx; j < start_idx + YELLOW_DILATION_SIZE; j++){
             if(maskArray[i][j] != INVALID_MASK){
@@ -165,7 +165,7 @@ __global__ void img_to_lines_kernel(
     }
 
     // ERODE WHITE
-    int start_idx = (MAX_COLOR_MASK_SIZE - WHITE_EROSION_SIZE)/2;
+    start_idx = (MAX_COLOR_MASK_SIZE - WHITE_EROSION_SIZE)/2;
     for(int i = start_idx; i < start_idx + WHITE_EROSION_SIZE; i++){
         for(int j = start_idx; j < start_idx + WHITE_EROSION_SIZE; j++){
             if(maskArray[i][j] != INVALID_MASK){
@@ -174,7 +174,7 @@ __global__ void img_to_lines_kernel(
         }
     }
     // DILATE WHITE
-    int start_idx = (MAX_COLOR_MASK_SIZE - WHITE_DILATION_SIZE)/2;
+    start_idx = (MAX_COLOR_MASK_SIZE - WHITE_DILATION_SIZE)/2;
     for(int i = start_idx; i < start_idx + WHITE_DILATION_SIZE; i++){
         for(int j = start_idx; j < start_idx + WHITE_DILATION_SIZE; j++){
             if(maskArray[i][j] != INVALID_MASK){
@@ -193,7 +193,7 @@ __global__ void img_to_lines_kernel(
     float gauss_sum = 0;
     for(int i = 0; i < BLUR_MASK_SIZE; i++){
         int erode_row = rowIndex - BLUR_MASK_SIZE/2 + i;
-        for(int j; j< BLUR_MASK_SIZE; j++){
+        for(int j = 0; j< BLUR_MASK_SIZE; j++){
             int erode_col = colIndex - BLUR_MASK_SIZE/2 + i;
             // check if index is valid
             if (erode_col >= 0 && 
@@ -220,7 +220,7 @@ __global__ void img_to_lines_kernel(
     float filter_val;
     for(int i = 0; i < SOBLE_MASK_SIZE; i++){
         int erode_row = rowIndex - SOBLE_MASK_SIZE/2 + i;
-        for(int j; j< SOBLE_MASK_SIZE; j++){
+        for(int j = 0; j< SOBLE_MASK_SIZE; j++){
             int erode_col = colIndex - SOBLE_MASK_SIZE/2 + i;
             // check if index is valid
             if (erode_col >= 0 && 

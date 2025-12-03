@@ -3,7 +3,6 @@
 
 // includes
 #include "image_utils.h"
-#include <cuda_runtime.h>
 #include <stdint.h>
 
 // PARAMS
@@ -46,11 +45,11 @@
 #define CANNY_THRESH_LOW 0
 
 
-void img_to_lines_kernel(
+__global__ void img_to_lines_kernel(
     char* pixel_array, 
     int image_height, 
     int image_width,
-    char gaussian_denominator,
+    float gaussian_denominator,
     char* filter_ws,
     float* blur_ws,
     float* mag2_ws,

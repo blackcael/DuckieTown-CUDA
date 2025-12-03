@@ -5,10 +5,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-Image load_image(const char *path) {
+Image image_utils_load_image(char* file_path_str) {
     Image img = {0};
 
-    img.pixels = stbi_load(path,
+    img.pixels = stbi_load(file_path_str,
                            &img.width,
                            &img.height,
                            &img.channels,
@@ -17,7 +17,7 @@ Image load_image(const char *path) {
     return img;
 }
 
-void free_image(Image *img) {
+void image_utils_free_image(Image *img) {
     if (img->pixels) {
         free(img->pixels);
         img->pixels = NULL;

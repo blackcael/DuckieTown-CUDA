@@ -1,6 +1,7 @@
 
 #include "image_utils.h"
 #include "img_to_lines.cuh"
+#include <stdio.h>
 
 #define BLOCK_SIZE_X 16
 #define BLOCK_SIZE_Y 16
@@ -31,6 +32,10 @@ int main(int argc, char *argv[]) {
   int img_size_chan = img.height * img.width * img.channels * sizeof(char);
   int img_array_size_c = img.height * img.width * sizeof(char);
   int img_array_size_f = img.height * img.width * sizeof(char);
+
+  // allocate host memory
+  host_pixels_yellow_out = (char*)malloc(img_array_size_c);
+  host_pixels_white_out = (char*)malloc(img_array_size_c);
 
   // allocate memory on device
   // in/out
