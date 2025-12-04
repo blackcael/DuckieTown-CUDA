@@ -20,7 +20,7 @@ NVCCFLAGS := -std=c++17 -O2 $(ARCH) -I$(INC_DIR) -rdc=true \
 CFLAGS := -std=c11 -O2 -Wall -Wextra -I$(INC_DIR)
 
 # ========= Source Files =========
-CU_SOURCES  := $(SRC_DIR)/img_to_lines.cu $(SRC_DIR)/main.cu
+CU_SOURCES  := $(SRC_DIR)/color_filter_kernel.cu $(SRC_DIR)/main.cu
 C_SOURCES   := $(SRC_DIR)/image_utils.c
 
 OBJ_CU      := $(patsubst $(SRC_DIR)/%.cu,$(BUILD_DIR)/%.o,$(CU_SOURCES))
@@ -63,6 +63,16 @@ run: $(TARGET)
 	    echo "ERROR: IMG must be between 0 and 4 (got $(IMG))"; \
 	    exit 1; \
 	fi
+
+# ========= Run ALL images 0–4 =========
+.PHONY: run_all
+run_all: $(TARGET)
+	@for i in 0 1 2 3 4; do \
+	    echo "=== Running image $$i ==="; \
+	    ./$(TARGET) "$(IMG_DIR)/image$$i.jpg"; \
+	    echo ""; \
+	done
+
 
 # ========= Clean =========
 .PHONY: clean

@@ -14,7 +14,7 @@ typedef struct {
     int width;       // image width in pixels
     int height;      // image height in pixels
     int channels;    // number of channels (e.g., 3 = RGB, 4 = RGBA)
-    char* pixels;  // pointer to width * height * channels bytes
+    unsigned char* pixels;  // pointer to width * height * channels bytes
 } Image;
 
 typedef struct {
@@ -27,6 +27,21 @@ typedef struct {
 Image image_utils_load_image(
     char* file_path_str
 );
+
+int image_utils_save_jpeg(
+    const char *filename, 
+    const Image *img, 
+    int quality
+);
+
+void image_utils_build_output_path(
+    const char* output_file_name,
+    const char* input_file,
+    size_t out_size
+);
+
+// crops image from top down, leaving the bottom up
+Image image_utils_crop_vertically(Image* input_image, int new_height);
 
 void image_utils_free_image(
     Image* img

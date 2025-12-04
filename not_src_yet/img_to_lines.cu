@@ -18,6 +18,10 @@
 #define MAX_EDGE_MASK_SIZE MAX2(BLUR_MASK_SIZE, SOBLE_MASK_SIZE)
 #define MAX_MASK_SIZE MAX2(MAX_COLOR_MASK_SIZE, MAX_EDGE_MASK_SIZE)
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #define INVALID_MASK 0xCC
 #define YELLOW_MASK 0xF0
 #define WHITE_MASK 0x0F
@@ -56,10 +60,10 @@ __global__ void img_to_lines_kernel(
     // Calculate indices
     int rowIndex = blockIdx.y * blockDim.y + threadIdx.y;
     int colIndex = blockIdx.x * blockDim.x + threadIdx.x;
-    if (rowIndex >= image_height || colIndex >= image_width) return;
+    if (rowIndex > image_height || colIndex > image_width) return;
 
     // Calculate position in image
-    int pixelIndex = colIndex * image_height + rowIndex;
+    int pixelIndex = rowIndex * image_width + rowIndex;
     char r = pixel_array[NUM_CHANNELS * pixelIndex + 0];
     char g = pixel_array[NUM_CHANNELS * pixelIndex + 1];
     char b = pixel_array[NUM_CHANNELS * pixelIndex + 2];
@@ -124,6 +128,9 @@ __global__ void img_to_lines_kernel(
     }
     filter_ws[pixelIndex] = isYELLOW_WHITE;
 
+    //################DEBUG################//
+    
+    
     // subGoal 1.3 Erode and Dilate - NOTE: COULD BENEFIT MASSIVELY BY TILING
     __syncthreads();
     char maskArray[MAX_COLOR_MASK_SIZE][MAX_COLOR_MASK_SIZE];
@@ -131,7 +138,7 @@ __global__ void img_to_lines_kernel(
     for(int i = 0; i < MAX_COLOR_MASK_SIZE; i++){
         int erode_row = rowIndex - MAX_COLOR_MASK_SIZE/2 + i;
         for(int j = 0; j< MAX_COLOR_MASK_SIZE; j++){
-            int erode_col = colIndex - MAX_COLOR_MASK_SIZE/2 + i;
+            int erode_col = colIndex - MAX_COLOR_MASK_SIZE/2 + j;
             // check if index is valid
             if (erode_col >= 0 && 
                 erode_row >= 0 &&
@@ -194,7 +201,7 @@ __global__ void img_to_lines_kernel(
     for(int i = 0; i < BLUR_MASK_SIZE; i++){
         int erode_row = rowIndex - BLUR_MASK_SIZE/2 + i;
         for(int j = 0; j< BLUR_MASK_SIZE; j++){
-            int erode_col = colIndex - BLUR_MASK_SIZE/2 + i;
+            int erode_col = colIndex - BLUR_MASK_SIZE/2 + j;
             // check if index is valid
             if (erode_col >= 0 && 
                 erode_row >= 0 &&
@@ -221,7 +228,7 @@ __global__ void img_to_lines_kernel(
     for(int i = 0; i < SOBLE_MASK_SIZE; i++){
         int erode_row = rowIndex - SOBLE_MASK_SIZE/2 + i;
         for(int j = 0; j< SOBLE_MASK_SIZE; j++){
-            int erode_col = colIndex - SOBLE_MASK_SIZE/2 + i;
+            int erode_col = colIndex - SOBLE_MASK_SIZE/2 + j;
             // check if index is valid
             if (erode_col >= 0 && 
                 erode_row >= 0 &&
@@ -239,7 +246,7 @@ __global__ void img_to_lines_kernel(
         }
     }
     //calc magnitude
-    float magnitude2 = soble_sum_x * soble_sum_x + soble_sum_y + soble_sum_y;
+    float magnitude2 = soble_sum_x * soble_sum_x + soble_sum_y * soble_sum_y;
     mag2_ws[pixelIndex] = magnitude2;
     
     //calc and sort angles

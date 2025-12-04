@@ -1,14 +1,20 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include "image_utils.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
+#define OUTPUT_FILE_DIRECTORY "img_to_lines/output_images/"
+
 Image image_utils_load_image(char* file_path_str) {
     Image img = {0};
 
-    img.pixels = stbi_load(file_path_str,
+    img.pixels = (unsigned char*)stbi_load(file_path_str,
                            &img.width,
                            &img.height,
                            &img.channels,
@@ -17,10 +23,63 @@ Image image_utils_load_image(char* file_path_str) {
     return img;
 }
 
+
+int image_utils_save_jpeg(const char *filename, const Image *img, int quality) {
+    int channels = img->channels;
+
+    // JPEG doesn't support alpha; if you have RGBA, just ignore A
+    if (channels == 4) {
+        channels = 3;
+    }
+
+    // stbi_write_jpg expects tightly packed rows:
+    // data size = width * height * channels
+    int ok = stbi_write_jpg(
+        filename,
+        img->width,
+        img->height,
+        channels,
+        img->pixels,
+        quality  // 1–100, usually 90 is nice
+    );
+
+    return ok != 0; // 1 on success, 0 on failure
+}
+
+void image_utils_build_output_path(
+    const char* output_file_name,
+    const char* input_file,
+    size_t out_size
+){
+    // 1. Find last '/' in the input path
+    const char *filename = strrchr(input_file, '/');
+    if (filename)
+        filename++;  // skip past '/'
+    else
+        filename = input_file;  // no slash found → whole string is filename
+
+    // 2. Build: OUTPUT_FILE_DIRECTORY + filename
+    snprintf(output_file_name, out_size, "%s%s", OUTPUT_FILE_DIRECTORY, filename);
+}
+
+Image image_utils_crop_vertically(Image* input, int new_height) {
+    int width = input->width;
+    int channels = input->channels;
+
+    // allocate new buffer
+    unsigned char* new_pixels = (unsigned char*) malloc(width * new_height * channels);
+
+    // copy the **bottom new_height rows**
+    int offset_src = (input->height - new_height) * width * channels;
+    memcpy(new_pixels, &input->pixels[offset_src], width * new_height * channels);
+
+    Image result = { width, new_height, channels, new_pixels };
+    return result;
+}
+
 void image_utils_free_image(Image *img) {
     if (img->pixels) {
         free(img->pixels);
         img->pixels = NULL;
     }
 }
-
