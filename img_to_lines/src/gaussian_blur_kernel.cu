@@ -35,8 +35,8 @@ __global__ void gaussian_blur_kernel(
                 // check if index is valid
                 if (erode_col >= 0 && 
                     erode_row >= 0 &&
-                    erode_col <= image_width &&
-                    erode_row <= image_height
+                    erode_col < image_width &&
+                    erode_row < image_height
                 ){
                     gauss_sum += gaussian_kernel[i * BLUR_MASK_SIZE + j] * gray_scale_pixels_in[erode_row * image_width + erode_col];
                 }else{

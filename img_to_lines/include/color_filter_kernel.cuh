@@ -31,7 +31,8 @@ __global__ void color_filter_kernel(
     unsigned char* pixel_array, 
     int image_height, 
     int image_width,
-    unsigned char* filter_ws,
+    unsigned char* filter_ws_w,
+    unsigned char* filter_ws_y,
     unsigned char* yellow_out,
     unsigned char* white_out,
     unsigned char* gray_scale_out

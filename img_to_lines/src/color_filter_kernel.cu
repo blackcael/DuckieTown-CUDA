@@ -81,8 +81,8 @@ void color_filter_assemble_mask(
             // check if index is valid
             if (erode_col >= 0 && 
                 erode_row >= 0 &&
-                erode_col <= image_width &&
-                erode_row <= image_height
+                erode_col < image_width &&
+                erode_row < image_height
             ){
                 maskArray[i][j] = filter_ws[erode_row * image_width + erode_col];
             }else{
@@ -98,7 +98,8 @@ __global__ void color_filter_kernel(
     unsigned char* pixel_array, 
     int image_height, 
     int image_width,
-    unsigned char* filter_ws,
+    unsigned char* filter_ws_w,
+    unsigned char* filter_ws_y,
     unsigned char* yellow_out,
     unsigned char* white_out,
     unsigned char* gray_scale_out
@@ -185,28 +186,28 @@ __global__ void color_filter_kernel(
         // white_out[pixelIndex] = isWhite;
         // return;
 
-        filter_ws[pixelIndex] = isYellow;
-    
+        filter_ws_y[pixelIndex] = isYellow;
+        filter_ws_w[pixelIndex] = isWhite;
+
         // subGoal 1.3 Erode and Dilate - NOTE: COULD BENEFIT MASSIVELY BY TILING
         char maskArray[MAX_COLOR_MASK_SIZE][MAX_COLOR_MASK_SIZE];
 
         // Erode Yellow
         __syncthreads(); //(1)
-        color_filter_assemble_mask(maskArray, filter_ws, rowIndex, colIndex, image_width, image_height);
+        color_filter_assemble_mask(maskArray, filter_ws_y, rowIndex, colIndex, image_width, image_height);
         isYellow = color_filter_erode(isYellow, maskArray, YELLOW_EROSION_SIZE);
         // Dilate Yellow
         __syncthreads(); //(2)
-        color_filter_assemble_mask(maskArray, filter_ws, rowIndex, colIndex, image_width, image_height);
+        color_filter_assemble_mask(maskArray, filter_ws_y, rowIndex, colIndex, image_width, image_height);
         isYellow = color_filter_dilate(isYellow, maskArray, YELLOW_DILATION_SIZE);
-
 
         // Erode White
         __syncthreads(); //(3)
-        color_filter_assemble_mask(maskArray, filter_ws, rowIndex, colIndex, image_width, image_height);
+        color_filter_assemble_mask(maskArray, filter_ws_w, rowIndex, colIndex, image_width, image_height);
         isWhite = color_filter_erode(isWhite, maskArray, WHITE_EROSION_SIZE);
         // Dilate White
         __syncthreads(); //(4)
-        color_filter_assemble_mask(maskArray, filter_ws, rowIndex, colIndex, image_width, image_height);
+        color_filter_assemble_mask(maskArray, filter_ws_w, rowIndex, colIndex, image_width, image_height);
         isWhite = color_filter_erode(isWhite, maskArray, WHITE_DILATION_SIZE);
 
         // // subGoal 2.1 Convert to GrayScale

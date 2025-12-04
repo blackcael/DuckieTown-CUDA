@@ -9,12 +9,13 @@
 // IMPORTANT - For now I am doing everything in global memory, we can implement tiling later
 
 // KERNEL DECLARATION //
-__global__ void sobel_filter_kernel(
-    unsigned char* blurred_pixels_in, 
+__global__ void NMS_kernel(
+    float* magnitude2_in,
+    float* magnitude2_in,
     int image_height, 
     int image_width,
     float* mag2_out,
-    unsigned char* angle_out
+    float* angle_out
 ){
     // Calculate indices
     int rowIndex = blockIdx.y * blockDim.y + threadIdx.y;
@@ -54,16 +55,7 @@ __global__ void sobel_filter_kernel(
         }
         //calc magnitude and angle
         mag2_out[pixelIndex] = sobel_sum_x * sobel_sum_x + sobel_sum_y * sobel_sum_y;
-        float angle = atan2f(sobel_sum_y, sobel_sum_x);
-        float a = angle * 180.0f / M_PI; // convert to degrees
-        if (a < 0) a += 180.0f;
-            
-        unsigned char  dir;
-        if (a <= 22.5 || a > 157.5)     dir = 0;        // 0°
-        else if (a <= 67.5)             dir = 1;       // 45°
-        else if (a <= 112.5)            dir = 2;       // 90°
-        else                            dir = 3; 
-        angle_out[pixelIndex] = dir;
+        angle_out[pixelIndex] = atan2f(sobel_sum_y, sobel_sum_x);
     }
 }
         
