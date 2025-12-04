@@ -52,8 +52,9 @@ __global__ void sobel_filter_kernel(
                 }
             }
         }
-        //calc magnitude and angle
+        // calc magnitude2
         mag2_out[pixelIndex] = sobel_sum_x * sobel_sum_x + sobel_sum_y * sobel_sum_y;
+        // calc angle bucket
         float angle = atan2f(sobel_sum_y, sobel_sum_x);
         float a = angle * 180.0f / M_PI; // convert to degrees
         if (a < 0) a += 180.0f;
