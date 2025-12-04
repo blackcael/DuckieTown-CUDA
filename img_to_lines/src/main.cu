@@ -2,6 +2,7 @@
 #include "image_utils.h"
 #include "color_filter_kernel.cuh"
 #include "gaussian_blur_kernel.cuh"
+#include "sobel_filter_kernel.cuh"
 #include <stdio.h>
 #include <string.h>
 
@@ -23,7 +24,7 @@ int main(int argc, char *argv[]) {
   unsigned char* host_pixels_yellow_out;
   unsigned char* host_pixels_white_out;
   unsigned char* host_pixels_gray_scale_out;
-  unsigned char* host_pixels_blur_out;
+  unsigned char* host_pixels_magnitude_out;
 
   // device inputs / outputs memory arrays
   unsigned char* device_pixels_in;
@@ -31,13 +32,14 @@ int main(int argc, char *argv[]) {
   unsigned char* device_pixels_white_out;
   unsigned char* device_pixels_gray_scale_out;
   unsigned char* device_pixels_blur_out;
+  unsigned char* device_pixels_magnitude_out;
 
 
   
   // device workspace memory arrays
   unsigned char* device_filter_ws;
   float* device_blur_ws;
-  // float* device_mag2_ws;
+  float* device_mag2_ws;
 
 
   // declare sizes
@@ -49,7 +51,7 @@ int main(int argc, char *argv[]) {
   host_pixels_yellow_out = (unsigned char*)malloc(img_array_size_c);
   host_pixels_white_out = (unsigned char*)malloc(img_array_size_c);
   host_pixels_gray_scale_out = (unsigned char*)malloc(img_array_size_c);
-  host_pixels_blur_out = (unsigned char*)malloc(img_array_size_c);
+  host_pixels_magnitude_out = (unsigned char*)malloc(img_array_size_c);
 
   // allocate memory on device
   // in/out
@@ -59,10 +61,12 @@ int main(int argc, char *argv[]) {
   cudaMalloc((void **) &device_pixels_gray_scale_out, img_array_size_c);
   cudaMalloc((void **) &device_pixels_blur_out, img_array_size_c);
 
+  cudaMalloc((void **) &device_pixels_magnitude_out, img_array_size_c);
+
   // ws
   cudaMalloc((void **) &device_filter_ws, img_array_size_c);
   cudaMalloc((void **) &device_blur_ws, img_array_size_f);
-  // cudaMalloc((void **) &device_mag2_ws, img_array_size_f);
+  cudaMalloc((void **) &device_mag2_ws, img_array_size_f);
 
 
   // copy data onto device
@@ -94,6 +98,15 @@ int main(int argc, char *argv[]) {
                     );   
   cudaDeviceSynchronize();
 
+  sobel_filter_kernel<<<DimGrid,DimBlock>>>(
+                      device_pixels_blur_out,
+                      img.height,
+                      img.width,
+                      device_mag2_ws,
+                      device_pixels_magnitude_out
+                    );   
+  cudaDeviceSynchronize();
+
   cudaError_t err = cudaGetLastError();
   printf("kernel error: %s\n", cudaGetErrorString(err));
 
@@ -103,16 +116,25 @@ int main(int argc, char *argv[]) {
   cudaMemcpy(host_pixels_yellow_out, device_pixels_yellow_out, img_array_size_c, cudaMemcpyDeviceToHost);
   cudaMemcpy(host_pixels_white_out, device_pixels_white_out, img_array_size_c, cudaMemcpyDeviceToHost);
   cudaMemcpy(host_pixels_gray_scale_out, device_pixels_gray_scale_out, img_array_size_c, cudaMemcpyDeviceToHost);
-  cudaMemcpy(host_pixels_blur_out, device_pixels_blur_out, img_array_size_c, cudaMemcpyDeviceToHost);
+  cudaMemcpy(host_pixels_magnitude_out, device_pixels_magnitude_out, img_array_size_c, cudaMemcpyDeviceToHost);
 
   // Debug Print Loop
+  // int pixel_mag_sum = 0;
+  // int pixel_mag_non_zero_cnt = 0;
   // for(int pixelindex = 0; pixelindex < img_array_size_c; pixelindex++){
-  //   printf("PixelIndex: %d, PixelValue: %d\n", pixelindex, host_pixels_blur_out[pixelindex]);
+  //   int pix_val = host_pixels_magnitude_out[pixelindex];
+  //   if(pix_val != 0){
+  //     printf("PixelIndex: %d, PixelValue: %d\n", pixelindex, pix_val);
+  //     pixel_mag_non_zero_cnt++;
+  //     pixel_mag_sum += pix_val;
+  //   } 
   // }
+  // printf("Non-Zero Pixel Avg:: %d\n", pixel_mag_sum / pixel_mag_non_zero_cnt);
+
 
   // Turn pixel arrays into jpegs
   printf("beginning jpegization\n");
-  Image output_image = {img.width, img.height, 1, host_pixels_blur_out};
+  Image output_image = {img.width, img.height, 1, host_pixels_magnitude_out};
   char output_file_path[64];
   image_utils_build_output_path(output_file_path, filepath, 64);
   image_utils_save_jpeg(output_file_path, &output_image, 100);
@@ -124,6 +146,7 @@ int main(int argc, char *argv[]) {
   cudaFree(device_pixels_white_out);
   cudaFree(device_pixels_gray_scale_out);
   cudaFree(device_pixels_blur_out);
+  cudaFree(device_pixels_magnitude_out);
 
   cudaFree(device_filter_ws);
   cudaFree(device_blur_ws);
@@ -133,7 +156,7 @@ int main(int argc, char *argv[]) {
   free(host_pixels_yellow_out);
   free(host_pixels_white_out);
   free(host_pixels_gray_scale_out);
-  free(host_pixels_blur_out);
+  free(host_pixels_magnitude_out);
 
   // // Free Images
   // image_utils_free_image(&uncropped_img);
