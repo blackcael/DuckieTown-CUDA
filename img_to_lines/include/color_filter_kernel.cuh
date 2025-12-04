@@ -2,7 +2,6 @@
 #define COLOR_FILTER_KERNEL_H
 
 // includes
-#include "image_utils.h"
 #include <stdint.h>
 
 // PARAMS

@@ -1,6 +1,7 @@
 
 #include "image_utils.h"
 #include "color_filter_kernel.cuh"
+#include "gaussian_blur_kernel.cuh"
 #include <stdio.h>
 #include <string.h>
 
@@ -22,29 +23,33 @@ int main(int argc, char *argv[]) {
   unsigned char* host_pixels_yellow_out;
   unsigned char* host_pixels_white_out;
   unsigned char* host_pixels_gray_scale_out;
+  unsigned char* host_pixels_blur_out;
 
   // device inputs / outputs memory arrays
   unsigned char* device_pixels_in;
   unsigned char* device_pixels_yellow_out;
   unsigned char* device_pixels_white_out;
   unsigned char* device_pixels_gray_scale_out;
+  unsigned char* device_pixels_blur_out;
+
 
   
   // device workspace memory arrays
   unsigned char* device_filter_ws;
-  // float* device_blur_ws;
+  float* device_blur_ws;
   // float* device_mag2_ws;
 
 
   // declare sizes
   int img_size_3chan_c = img.height * img.width * img.channels * sizeof(unsigned char);
   int img_array_size_c = img.height * img.width * sizeof(unsigned char);
-  // int img_array_size_f = img.height * img.width * sizeof(float);
+  int img_array_size_f = img.height * img.width * sizeof(float);
 
   // allocate host memory
   host_pixels_yellow_out = (unsigned char*)malloc(img_array_size_c);
   host_pixels_white_out = (unsigned char*)malloc(img_array_size_c);
   host_pixels_gray_scale_out = (unsigned char*)malloc(img_array_size_c);
+  host_pixels_blur_out = (unsigned char*)malloc(img_array_size_c);
 
   // allocate memory on device
   // in/out
@@ -52,10 +57,13 @@ int main(int argc, char *argv[]) {
   cudaMalloc((void **) &device_pixels_yellow_out, img_array_size_c);
   cudaMalloc((void **) &device_pixels_white_out, img_array_size_c);
   cudaMalloc((void **) &device_pixels_gray_scale_out, img_array_size_c);
+  cudaMalloc((void **) &device_pixels_blur_out, img_array_size_c);
+
   // ws
   cudaMalloc((void **) &device_filter_ws, img_array_size_c);
+  cudaMalloc((void **) &device_blur_ws, img_array_size_f);
   // cudaMalloc((void **) &device_mag2_ws, img_array_size_f);
-  // cudaMalloc((void **) &device_blur_ws, img_array_size_f);
+
 
   // copy data onto device
   cudaMemcpy(device_pixels_in, host_pixels_in, img_size_3chan_c, cudaMemcpyHostToDevice);
@@ -77,6 +85,15 @@ int main(int argc, char *argv[]) {
                       device_pixels_gray_scale_out
                     );
   cudaDeviceSynchronize();
+
+  gaussian_blur_kernel<<<DimGrid,DimBlock>>>(
+                      device_pixels_gray_scale_out,
+                      img.height,
+                      img.width,
+                      device_pixels_blur_out
+                    );   
+  cudaDeviceSynchronize();
+
   cudaError_t err = cudaGetLastError();
   printf("kernel error: %s\n", cudaGetErrorString(err));
 
@@ -86,14 +103,16 @@ int main(int argc, char *argv[]) {
   cudaMemcpy(host_pixels_yellow_out, device_pixels_yellow_out, img_array_size_c, cudaMemcpyDeviceToHost);
   cudaMemcpy(host_pixels_white_out, device_pixels_white_out, img_array_size_c, cudaMemcpyDeviceToHost);
   cudaMemcpy(host_pixels_gray_scale_out, device_pixels_gray_scale_out, img_array_size_c, cudaMemcpyDeviceToHost);
+  cudaMemcpy(host_pixels_blur_out, device_pixels_blur_out, img_array_size_c, cudaMemcpyDeviceToHost);
 
+  // Debug Print Loop
+  // for(int pixelindex = 0; pixelindex < img_array_size_c; pixelindex++){
+  //   printf("PixelIndex: %d, PixelValue: %d\n", pixelindex, host_pixels_blur_out[pixelindex]);
+  // }
 
   // Turn pixel arrays into jpegs
   printf("beginning jpegization\n");
-  // for(int pixelindex = 0; pixelindex < img_array_size_c; pixelindex++){
-  //   printf("PixelIndex: %d, PixelValue: %d\n", pixelindex, host_pixels_white_out[pixelindex]);
-  // }
-  Image output_image = {img.width, img.height, 1, host_pixels_gray_scale_out};
+  Image output_image = {img.width, img.height, 1, host_pixels_blur_out};
   char output_file_path[64];
   image_utils_build_output_path(output_file_path, filepath, 64);
   image_utils_save_jpeg(output_file_path, &output_image, 100);
@@ -103,11 +122,23 @@ int main(int argc, char *argv[]) {
   cudaFree(device_pixels_in);
   cudaFree(device_pixels_yellow_out);
   cudaFree(device_pixels_white_out);
+  cudaFree(device_pixels_gray_scale_out);
+  cudaFree(device_pixels_blur_out);
+
+  cudaFree(device_filter_ws);
+  cudaFree(device_blur_ws);
 
   // Free Host Memory
   free(host_pixels_in);
   free(host_pixels_yellow_out);
   free(host_pixels_white_out);
+  free(host_pixels_gray_scale_out);
+  free(host_pixels_blur_out);
+
+  // // Free Images
+  // image_utils_free_image(&uncropped_img);
+  // image_utils_free_image(&img);
+  // image_utils_free_image(&output_image);
 
   return 0;
 }

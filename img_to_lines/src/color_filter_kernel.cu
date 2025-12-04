@@ -212,9 +212,6 @@ __global__ void color_filter_kernel(
         isWhite = color_filter_erode(isWhite, maskArray, WHITE_DILATION_SIZE);
 
         // // subGoal 2.1 Convert to GrayScale
-
-        // // float gray_f = V;
-        // // blur_ws[pixelIndex] = gray_f;
         gray_scale_out[pixelIndex] = V_255;
         yellow_out[pixelIndex] = isYellow;
         white_out[pixelIndex] = isWhite;
