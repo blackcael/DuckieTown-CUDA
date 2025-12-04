@@ -1,5 +1,3 @@
-
-
 #include "color_filter_kernel.cuh"
 #define NUM_CHANNELS 3
 

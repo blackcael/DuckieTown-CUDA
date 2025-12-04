@@ -1,6 +1,4 @@
-
-
-#include "gaussian_blur_kernel.cuh"
+#include "soble_filter_kernel.cuh"
 
 // Macros
 #define MAX2(a,b) ((a) > (b) ? (a) : (b))

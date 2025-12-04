@@ -1,5 +1,3 @@
-
-
 #include "gaussian_blur_kernel.cuh"
 
 // Macros
