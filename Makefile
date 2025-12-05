@@ -56,9 +56,10 @@ IMG ?= 0
 
 .PHONY: run
 run: $(TARGET)
+	rm -f cuda_timing.log
 	@if [ "$(IMG)" -ge 0 ] && [ "$(IMG)" -le 4 ]; then \
 	    echo "Running with $(IMG_DIR)/image$(IMG).jpg"; \
-	    ./$(TARGET) "$(IMG_DIR)/image$(IMG).jpg"; \
+	    ./$(TARGET) "$(IMG_DIR)/image$(IMG).jpg" >> cuda_timing.log; \
 	else \
 	    echo "ERROR: IMG must be between 0 and 4 (got $(IMG))"; \
 	    exit 1; \
