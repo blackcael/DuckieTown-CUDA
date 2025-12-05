@@ -13,6 +13,7 @@ import time
 import cv2
 import numpy as np
 
+NEW_IMAGE_HEIGHT = 260
 
 # -------------------------------------------------------------
 # ---- Utility functions
@@ -85,6 +86,9 @@ def color_filter_yellow_white(bgr_img):
 
 
 def process_image(bgr_img):
+
+    bgr_img = crop_vertically_from_bottom(bgr_img, new_height=NEW_IMAGE_HEIGHT)
+
     timings = {}
 
     t0 = time.perf_counter()
