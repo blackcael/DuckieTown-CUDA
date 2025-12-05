@@ -20,7 +20,7 @@ NVCCFLAGS := -std=c++17 -O2 $(ARCH) -I$(INC_DIR) -rdc=true \
 CFLAGS := -std=c11 -O2 -Wall -Wextra -I$(INC_DIR)
 
 # ========= Source Files =========
-CU_SOURCES  := $(SRC_DIR)/color_filter_kernel.cu $(SRC_DIR)/gaussian_blur_kernel.cu $(SRC_DIR)/sobel_filter_kernel.cu $(SRC_DIR)/main.cu
+CU_SOURCES  := $(SRC_DIR)/color_filter_kernel.cu $(SRC_DIR)/gaussian_blur_kernel.cu $(SRC_DIR)/sobel_filter_kernel.cu $(SRC_DIR)/NMS_kernel.cu $(SRC_DIR)/bitwiseAND_kernel.cu $(SRC_DIR)/dilate_kernel.cu $(SRC_DIR)/erode_kernel.cu $(SRC_DIR)/main.cu
 C_SOURCES   := $(SRC_DIR)/image_utils.c
 
 OBJ_CU      := $(patsubst $(SRC_DIR)/%.cu,$(BUILD_DIR)/%.o,$(CU_SOURCES))

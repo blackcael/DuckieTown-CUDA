@@ -1,4 +1,4 @@
-#include "sobel_filter_kernel.cuh"
+#include "NMS_kernel.cuh"
 
 // Macros
 #define MAX2(a,b) ((a) > (b) ? (a) : (b))
@@ -14,7 +14,8 @@ __global__ void NMS_kernel(
     unsigned char* angle_in,
     int image_height, 
     int image_width,
-    float* nms_mag_out
+    float* nms_mag_out,
+    unsigned char* edge_out
 ){
     // Calculate indices
     int rowIndex = blockIdx.y * blockDim.y + threadIdx.y;
@@ -48,11 +49,20 @@ __global__ void NMS_kernel(
             break;
         }
 
+        float edge_strength;
         if (m >= m1 && m >= m2){
-            nms_mag_out[pixelIndex] = m;
+           edge_strength = m;
         }else{
-            nms_mag_out[pixelIndex] = 0.0f;
+            edge_strength = 0.0f;
         }
+        nms_mag_out[pixelIndex] = edge_strength;
+
+        unsigned char edge_class;
+
+        if (m >= CANNY_THRESH_HIGH) edge_class = 0xFF;      // strong
+        else if (m >= CANNY_THRESH_LOW) edge_class = 0x00;  // weak
+        else edge_class = 0x00;    
+        edge_out[pixelIndex] = edge_class;
     }
 }    
 

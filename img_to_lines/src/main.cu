@@ -1,8 +1,13 @@
 
 #include "image_utils.h"
 #include "color_filter_kernel.cuh"
+#include "erode_kernel.cuh"
+#include "dilate_kernel.cuh"
 #include "gaussian_blur_kernel.cuh"
 #include "sobel_filter_kernel.cuh"
+#include "NMS_kernel.cuh"
+#include "bitwiseAND_kernel.cuh"
+
 #include <stdio.h>
 #include <string.h>
 
@@ -24,6 +29,8 @@ int main(int argc, char *argv[]) {
   unsigned char* host_pixels_yellow_out;
   unsigned char* host_pixels_white_out;
   unsigned char* host_pixels_gray_scale_out;
+  unsigned char* host_temp_out_c;  
+  float* host_temp_out_f;
 
   // device inputs / outputs memory arrays
   unsigned char* device_pixels_in;
@@ -31,6 +38,9 @@ int main(int argc, char *argv[]) {
   unsigned char* device_pixels_white_out;
   unsigned char* device_pixels_gray_scale_out;
   unsigned char* device_pixels_blur_out;
+  unsigned char* device_pixels_NMS_edge_out;
+  unsigned char* device_pixels_yellow_edge_out;
+  unsigned char* device_pixels_white_edge_out;
 
   // device workspace memory arrays
   unsigned char* device_filter_ws_y;
@@ -38,6 +48,7 @@ int main(int argc, char *argv[]) {
   float* device_blur_ws;
   float* device_mag2_ws;
   unsigned char* device_angle_ws;
+  float* device_NMS_mag_ws;
 
 
   // declare sizes
@@ -49,6 +60,8 @@ int main(int argc, char *argv[]) {
   host_pixels_yellow_out = (unsigned char*)malloc(img_array_size_c);
   host_pixels_white_out = (unsigned char*)malloc(img_array_size_c);
   host_pixels_gray_scale_out = (unsigned char*)malloc(img_array_size_c);
+  host_temp_out_c = (unsigned char*)malloc(img_array_size_c);
+  host_temp_out_f = (float*)malloc(img_array_size_f);
 
   // allocate memory on device
   // in/out
@@ -57,6 +70,9 @@ int main(int argc, char *argv[]) {
   cudaMalloc((void **) &device_pixels_white_out, img_array_size_c);
   cudaMalloc((void **) &device_pixels_gray_scale_out, img_array_size_c);
   cudaMalloc((void **) &device_pixels_blur_out, img_array_size_c);
+  cudaMalloc((void **) &device_pixels_NMS_edge_out, img_array_size_c);
+  cudaMalloc((void **) &device_pixels_yellow_edge_out, img_array_size_c);
+  cudaMalloc((void **) &device_pixels_white_edge_out, img_array_size_c);
 
   // ws
   cudaMalloc((void **) &device_filter_ws_y, img_array_size_c);
@@ -64,6 +80,7 @@ int main(int argc, char *argv[]) {
   cudaMalloc((void **) &device_blur_ws, img_array_size_f);
   cudaMalloc((void **) &device_mag2_ws, img_array_size_f);
   cudaMalloc((void **) &device_angle_ws, img_array_size_c);
+  cudaMalloc((void **) &device_NMS_mag_ws, img_array_size_f);
 
   // copy data onto device
   cudaMemcpy(device_pixels_in, host_pixels_in, img_size_3chan_c, cudaMemcpyHostToDevice);
@@ -79,11 +96,39 @@ int main(int argc, char *argv[]) {
                       device_pixels_in,
                       img.height,
                       img.width,
-                      device_filter_ws_y,
-                      device_filter_ws_w,
                       device_pixels_yellow_out,
                       device_pixels_white_out,
                       device_pixels_gray_scale_out
+                    );
+  cudaDeviceSynchronize();
+
+  //ERODES
+  erode_kernel<<<DimGrid,DimBlock>>>(
+                      device_pixels_yellow_out,
+                      img.height,
+                      img.width,
+                      device_filter_ws_y
+                    );
+  erode_kernel<<<DimGrid,DimBlock>>>(
+                      device_pixels_white_out,
+                      img.height,
+                      img.width,
+                      device_filter_ws_w
+                    );
+  cudaDeviceSynchronize();
+
+  //DILATES
+  dilate_kernel<<<DimGrid,DimBlock>>>(
+                      device_filter_ws_y,
+                      img.height,
+                      img.width,
+                      device_pixels_yellow_out
+                    );
+  dilate_kernel<<<DimGrid,DimBlock>>>(
+                      device_filter_ws_w,
+                      img.height,
+                      img.width,
+                      device_pixels_white_out
                     );
   cudaDeviceSynchronize();
 
@@ -104,6 +149,28 @@ int main(int argc, char *argv[]) {
                     );   
   cudaDeviceSynchronize();
 
+  NMS_kernel<<<DimGrid,DimBlock>>>(
+                      device_mag2_ws,
+                      device_angle_ws,
+                      img.height,
+                      img.width,
+                      device_NMS_mag_ws,
+                      device_pixels_NMS_edge_out
+                    );   
+  cudaDeviceSynchronize();
+
+  bitwiseAND_kernel<<<DimGrid,DimBlock>>>(
+                      device_pixels_yellow_out,
+                      device_pixels_white_out,
+                      device_pixels_NMS_edge_out,
+                      img.height,
+                      img.width,
+                      device_pixels_yellow_edge_out,
+                      device_pixels_white_edge_out
+                    );   
+
+  
+
 
 
   cudaError_t err = cudaGetLastError();
@@ -115,12 +182,21 @@ int main(int argc, char *argv[]) {
   cudaMemcpy(host_pixels_yellow_out, device_pixels_yellow_out, img_array_size_c, cudaMemcpyDeviceToHost);
   cudaMemcpy(host_pixels_white_out, device_pixels_white_out, img_array_size_c, cudaMemcpyDeviceToHost);
   cudaMemcpy(host_pixels_gray_scale_out, device_pixels_gray_scale_out, img_array_size_c, cudaMemcpyDeviceToHost);
+  cudaMemcpy(host_temp_out_f, device_NMS_mag_ws, img_array_size_f, cudaMemcpyDeviceToHost);
+  cudaMemcpy(host_temp_out_c, device_pixels_white_edge_out, img_array_size_c, cudaMemcpyDeviceToHost);
 
   // // Debug Print Loop -- Simple
   // for(int pixelindex = 0; pixelindex < img_array_size_c; pixelindex++){
   //   int pix_val = host_pixels_white_out[pixelindex];
   //   printf("PixelIndex: %d, PixelValue: %d\n", pixelindex, pix_val);
   // }
+
+  // Debug Print Loop -- Float
+  // for(int pixelindex = 0; pixelindex < img_array_size_c; pixelindex++){
+  //   float pix_val = host_temp_out_f[pixelindex];
+  //   printf("PixelIndex: %d, PixelValue: %f\n", pixelindex, pix_val);
+  // }
+
 
   // Debug Print Loop -- Counting
   // int pixel_mag_sum = 0;
@@ -138,7 +214,7 @@ int main(int argc, char *argv[]) {
 
   // Turn pixel arrays into jpegs
   printf("beginning jpegization\n");
-  Image output_image = {img.width, img.height, 1, host_pixels_gray_scale_out};
+  Image output_image = {img.width, img.height, 1, host_temp_out_c};
   char output_file_path[64];
   image_utils_build_output_path(output_file_path, filepath, 64);
   image_utils_save_jpeg(output_file_path, &output_image, 100);
