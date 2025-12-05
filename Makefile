@@ -56,7 +56,7 @@ IMG ?= 0
 
 .PHONY: run
 run: $(TARGET)
-	rm -f cuda_timing.log
+	@rm -f cuda_timing.log;
 	@if [ "$(IMG)" -ge 0 ] && [ "$(IMG)" -le 4 ]; then \
 	    echo "Running with $(IMG_DIR)/image$(IMG).jpg"; \
 	    ./$(TARGET) "$(IMG_DIR)/image$(IMG).jpg" >> cuda_timing.log; \
@@ -68,9 +68,10 @@ run: $(TARGET)
 # ========= Run ALL images 0–4 =========
 .PHONY: run_all
 run_all: $(TARGET)
+	@rm -f cuda_timing.log;
 	@for i in 0 1 2 3 4; do \
 	    echo "=== Running image $$i ==="; \
-	    ./$(TARGET) "$(IMG_DIR)/image$$i.jpg"; \
+	    ./$(TARGET) "$(IMG_DIR)/image$$i.jpg" >> cuda_timing.log; \
 	    echo ""; \
 	done
 
