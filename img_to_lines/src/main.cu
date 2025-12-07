@@ -7,6 +7,7 @@
 #include "sobel_filter_kernel.cuh"
 #include "NMS_kernel.cuh"
 #include "bitwiseAND_kernel.cuh"
+#include "timing.cuh"
 
 #include <stdio.h>
 #include <string.h>
@@ -19,9 +20,12 @@
 
 int main(int argc, char *argv[]) {
   char* filepath = argv[1];
-  printf("Using File: %s\n", filepath);
+  printf("\n ===== Using File: %s ===== \n", filepath);
   Image uncropped_img = image_utils_load_image(filepath);
   Image img = image_utils_crop_vertically(&uncropped_img, NEW_HEIGHT);
+
+  // init timer
+  timing_init();
 
 
   // host inputs / outputs memory arrays
@@ -83,8 +87,9 @@ int main(int argc, char *argv[]) {
   cudaMalloc((void **) &device_NMS_mag_ws, img_array_size_f);
 
   // copy data onto device
+  timing_start();
   cudaMemcpy(device_pixels_in, host_pixels_in, img_size_3chan_c, cudaMemcpyHostToDevice);
-
+  timing_stop(&ms_color);
   //@@ Initialize the grid and block dimensions here
   dim3 DimBlock(BLOCK_SIZE_X, BLOCK_SIZE_Y,1);
   dim3 DimGrid((img.width-1)/BLOCK_SIZE_X+1, (img.height-1) / BLOCK_SIZE_Y+1,1);
@@ -92,6 +97,7 @@ int main(int argc, char *argv[]) {
   printf("begining kernel\n");
 
   //@@ Launch the GPU Kernel here
+  timing_start();
   color_filter_kernel<<<DimGrid,DimBlock>>>(
                       device_pixels_in,
                       img.height,
@@ -100,9 +106,10 @@ int main(int argc, char *argv[]) {
                       device_pixels_white_out,
                       device_pixels_gray_scale_out
                     );
-  cudaDeviceSynchronize();
+  timing_stop(&ms_color);
 
   //ERODES
+  timing_start();
   erode_kernel<<<DimGrid,DimBlock>>>(
                       device_pixels_yellow_out,
                       img.height,
@@ -115,9 +122,10 @@ int main(int argc, char *argv[]) {
                       img.width,
                       device_filter_ws_w
                     );
-  cudaDeviceSynchronize();
+  timing_stop(&ms_erode);
 
   //DILATES
+  timing_start();
   dilate_kernel<<<DimGrid,DimBlock>>>(
                       device_filter_ws_y,
                       img.height,
@@ -130,16 +138,18 @@ int main(int argc, char *argv[]) {
                       img.width,
                       device_pixels_white_out
                     );
-  cudaDeviceSynchronize();
+  timing_stop(&ms_dilate);
 
+  timing_start();
   gaussian_blur_kernel<<<DimGrid,DimBlock>>>(
                       device_pixels_gray_scale_out,
                       img.height,
                       img.width,
                       device_pixels_blur_out
                     );   
-  cudaDeviceSynchronize();
+  timing_stop(&ms_blur);
 
+  timing_start();
   sobel_filter_kernel<<<DimGrid,DimBlock>>>(
                       device_pixels_blur_out,
                       img.height,
@@ -147,8 +157,9 @@ int main(int argc, char *argv[]) {
                       device_mag2_ws,
                       device_angle_ws
                     );   
-  cudaDeviceSynchronize();
+  timing_stop(&ms_sobel);
 
+  timing_start();
   NMS_kernel<<<DimGrid,DimBlock>>>(
                       device_mag2_ws,
                       device_angle_ws,
@@ -157,8 +168,9 @@ int main(int argc, char *argv[]) {
                       device_NMS_mag_ws,
                       device_pixels_NMS_edge_out
                     );   
-  cudaDeviceSynchronize();
+  timing_stop(&ms_NMS);
 
+  timing_start();
   bitwiseAND_kernel<<<DimGrid,DimBlock>>>(
                       device_pixels_yellow_out,
                       device_pixels_white_out,
@@ -168,7 +180,7 @@ int main(int argc, char *argv[]) {
                       device_pixels_yellow_edge_out,
                       device_pixels_white_edge_out
                     );   
-
+  timing_stop(&ms_bitwiseAND);
   
 
 
@@ -178,13 +190,18 @@ int main(int argc, char *argv[]) {
 
   printf("Finishing kernel\n");
 
+
+
   //@@ Copy the GPU memory back to the CPU here
+  timing_start();
   cudaMemcpy(host_pixels_yellow_out, device_pixels_yellow_out, img_array_size_c, cudaMemcpyDeviceToHost);
   cudaMemcpy(host_pixels_white_out, device_pixels_white_out, img_array_size_c, cudaMemcpyDeviceToHost);
-  cudaMemcpy(host_pixels_gray_scale_out, device_pixels_gray_scale_out, img_array_size_c, cudaMemcpyDeviceToHost);
-  cudaMemcpy(host_temp_out_f, device_NMS_mag_ws, img_array_size_f, cudaMemcpyDeviceToHost);
+  // cudaMemcpy(host_pixels_gray_scale_out, device_pixels_gray_scale_out, img_array_size_c, cudaMemcpyDeviceToHost);
+  // cudaMemcpy(host_temp_out_f, device_NMS_mag_ws, img_array_size_f, cudaMemcpyDeviceToHost);
   cudaMemcpy(host_temp_out_c, device_pixels_white_edge_out, img_array_size_c, cudaMemcpyDeviceToHost);
+  timing_stop(&ms_memcpyDH);
 
+  timing_print_times();
   // // Debug Print Loop -- Simple
   // for(int pixelindex = 0; pixelindex < img_array_size_c; pixelindex++){
   //   int pix_val = host_pixels_white_out[pixelindex];
