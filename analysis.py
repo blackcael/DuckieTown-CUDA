@@ -4,6 +4,7 @@ import re
 import statistics
 import math
 import argparse
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -106,8 +107,8 @@ def plot_comparison(stages, cpu_times, cuda_times, speedups, output_path=None):
     width = 0.35
 
     fig, ax = plt.subplots()
-    ax.bar(x - width/2, cpu_times, width, label="CPU (Python/OpenCV)")
-    ax.bar(x + width/2, cuda_times, width, label="CUDA")
+    ax.bar(x - width/2, cpu_times, width, label="CPU (Python/OpenCV)", color="tab:blue")
+    ax.bar(x + width/2, cuda_times, width, label="CUDA", color="tab:green")
 
     ax.set_ylabel("Time per image (ms)")
     ax.set_title("Per-stage timing: CPU vs CUDA (including H2D/D2H memcpy)")
@@ -134,7 +135,55 @@ def plot_comparison(stages, cpu_times, cuda_times, speedups, output_path=None):
     fig.tight_layout()
     if output_path:
         fig.savefig(output_path, dpi=150)
-        print(f"\nSaved figure to: {output_path}")
+        print(f"\nSaved comparison figure to: {output_path}")
+    else:
+        plt.show()
+
+
+def plot_speedup(stages, speedups, output_path=None):
+    """
+    Plot a separate figure showing speedup (CPU / CUDA) per stage.
+    Stages with NaN speedup (e.g., memcpy-only) are shown as 0 with 'n/a' label.
+    """
+    x = np.arange(len(stages))
+
+    # Use 0 for NaN for plotting, keep NaN for labels
+    speedups_plot = [s if not math.isnan(s) else 0.0 for s in speedups]
+
+    fig, ax = plt.subplots()
+    ax.bar(x, speedups_plot, color="tab:orange")
+
+    ax.set_ylabel("Speedup (CPU time / CUDA time)")
+    ax.set_title("Per-stage speedup")
+    ax.set_xticks(x)
+    ax.set_xticklabels(stages, rotation=45, ha="right")
+
+    # Sensible y-limit if there are valid speedups
+    finite_vals = [s for s in speedups if not math.isnan(s)]
+    if finite_vals:
+        ymax = max(finite_vals)
+        ax.set_ylim(0, ymax * 1.2)
+
+    # Annotate each bar
+    for i, s in enumerate(speedups):
+        if math.isnan(s):
+            label = "n/a"
+        else:
+            label = f"{s:.1f}×"
+        y = speedups_plot[i]
+        ax.text(
+            x[i],
+            y * 1.02 if y > 0 else 0.01,
+            label,
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
+
+    fig.tight_layout()
+    if output_path:
+        fig.savefig(output_path, dpi=150)
+        print(f"Saved speedup figure to: {output_path}")
     else:
         plt.show()
 
@@ -158,7 +207,8 @@ def main():
     parser.add_argument(
         "-o", "--output",
         default=None,
-        help="Optional path to save the figure instead of showing it",
+        help="Optional base path to save the comparison figure "
+             "(speedup figure will get a '_speedup' suffix)",
     )
     args = parser.parse_args()
 
@@ -224,8 +274,20 @@ def main():
         cuda_vals_plot.append(cuda_plot)
         speedups.append(speedup)
 
-    # Plot
-    plot_comparison(all_stages, cpu_vals_plot, cuda_vals_plot, speedups, args.output)
+    # Handle output paths for the two figures
+    if args.output:
+        base, ext = os.path.splitext(args.output)
+        if ext == "":
+            ext = ".png"
+        comparison_path = base + ext
+        speedup_path = base + "_speedup" + ext
+    else:
+        comparison_path = None
+        speedup_path = None
+
+    # Plot figures
+    plot_comparison(all_stages, cpu_vals_plot, cuda_vals_plot, speedups, comparison_path)
+    plot_speedup(all_stages, speedups, speedup_path)
 
 
 if __name__ == "__main__":
