@@ -16,6 +16,8 @@ ARCH := -gencode arch=compute_86,code=sm_86
 # ========= Flags =========
 NVCCFLAGS := -std=c++17 -O2 $(ARCH) -I$(INC_DIR) -rdc=true \
              -Xcompiler -Wall,-Wextra
+# For Nsight tools
+NVCCFLAGS += -lineinfo
 
 CFLAGS := -std=c11 -O2 -Wall -Wextra -I$(INC_DIR)
 
@@ -47,6 +49,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 # Link everything with nvcc
 $(TARGET): $(OBJECTS)
 	$(NVCC) $(NVCCFLAGS) $^ -o $@
+
+# == ROOFLINE == 
+EXEC := duckietown_img
 
 # ========= Run with Image Argument =========
 # Usage:
@@ -85,7 +90,19 @@ run_100:
 	    echo "" >> $(BASE_DIR)/cuda_timing.log; \
 	done
 
+# ========= Nsight Compute Profiling =========
+
+APP_ARGS ?=
+
+.PHONY: profile_roofline
+profile_roofline: all
+	ncu --set full \
+	    --section SpeedOfLight_RooflineChart \
+	    --export ncu_roofline \
+	    ./duckietown_img $(APP_ARGS)
+
 # ========= Clean =========
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
+
