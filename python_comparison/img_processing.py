@@ -72,11 +72,11 @@ def crop_vertically_from_bottom(bgr_img, new_height):
 def color_filter_yellow_white(bgr_img):
     hsv = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2HSV)
 
-    yellow_lower = np.array([15, 60, 150], dtype=np.uint8)
-    yellow_upper = np.array([40, 255, 255], dtype=np.uint8)
+    yellow_lower = np.array([16, 51, 91], dtype=np.uint8)
+    yellow_upper = np.array([44, 179, 254], dtype=np.uint8)
 
-    white_lower = np.array([0, 0, 200], dtype=np.uint8)
-    white_upper = np.array([179, 40, 255], dtype=np.uint8)
+    white_lower = np.array([70, 0, 150], dtype=np.uint8)
+    white_upper = np.array([170, 150, 255], dtype=np.uint8)
 
     yellow = cv2.inRange(hsv, yellow_lower, yellow_upper)
     white = cv2.inRange(hsv, white_lower, white_upper)
