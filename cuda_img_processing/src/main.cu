@@ -202,31 +202,6 @@ int main(int argc, char *argv[]) {
   timing_stop(&ms_memcpyDH);
 
   timing_print_times();
-  // // Debug Print Loop -- Simple
-  // for(int pixelindex = 0; pixelindex < img_array_size_c; pixelindex++){
-  //   int pix_val = host_pixels_white_out[pixelindex];
-  //   printf("PixelIndex: %d, PixelValue: %d\n", pixelindex, pix_val);
-  // }
-
-  // Debug Print Loop -- Float
-  // for(int pixelindex = 0; pixelindex < img_array_size_c; pixelindex++){
-  //   float pix_val = host_temp_out_f[pixelindex];
-  //   printf("PixelIndex: %d, PixelValue: %f\n", pixelindex, pix_val);
-  // }
-
-
-  // Debug Print Loop -- Counting
-  // int pixel_mag_sum = 0;
-  // int pixel_mag_non_zero_cnt = 0;
-  // for(int pixelindex = 0; pixelindex < img_array_size_c; pixelindex++){
-  //   int pix_val = host_pixels_magnitude_out[pixelindex];
-  //   if(pix_val != 0){
-  //     printf("PixelIndex: %d, PixelValue: %d\n", pixelindex, pix_val);
-  //     pixel_mag_non_zero_cnt++;
-  //     pixel_mag_sum += pix_val;
-  //   } 
-  // }
-  // printf("Non-Zero Pixel Avg:: %d\n", pixel_mag_sum / pixel_mag_non_zero_cnt);
 
 
   // Turn pixel arrays into jpegs
@@ -236,6 +211,37 @@ int main(int argc, char *argv[]) {
   image_utils_build_output_path(output_file_path, filepath, 64);
   image_utils_save_jpeg(output_file_path, &output_image, 100);
   printf("ending jpegization\n");
+
+
+  // Free Device Resources
+  cudaFree(device_pixels_in);
+  cudaFree(device_pixels_yellow_out);
+  cudaFree(device_pixels_white_out);
+  cudaFree(device_pixels_gray_scale_out);
+  cudaFree(device_pixels_blur_out);
+  cudaFree(device_pixels_NMS_edge_out);
+  cudaFree(device_pixels_yellow_edge_out);
+  cudaFree(device_pixels_white_edge_out);
+  cudaFree(device_filter_ws_y);
+  cudaFree(device_filter_ws_w);
+  cudaFree(device_blur_ws);
+  cudaFree(device_mag2_ws);
+  cudaFree(device_angle_ws);
+  cudaFree(device_NMS_mag_ws);
+
+  //Free Host Resources
+  free(host_pixels_yellow_out);
+  free(host_pixels_white_out);
+  free(host_pixels_gray_scale_out);
+  free(host_temp_out_c);
+  free(host_temp_out_f);
+
+  //Free Images
+  image_utils_free_image(&img);
+  image_utils_free_image(&uncropped_img);
+
+
+
 
 
   return 0;

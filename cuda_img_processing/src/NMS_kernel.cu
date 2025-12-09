@@ -65,15 +65,3 @@ __global__ void NMS_kernel(
         edge_out[pixelIndex] = edge_class;
     }
 }    
-
-
-
-// void cuda_sobel_filter_run(
-//     unsigned char* blurred_pixels_in, 
-//     int image_height, 
-//     int image_width,
-//     float* mag_output,
-//     float* angle_output
-// ){
-
-// }
