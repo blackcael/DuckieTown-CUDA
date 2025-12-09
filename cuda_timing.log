@@ -5,18 +5,18 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-D2H copies        :    0.000 ms
-color_filter      :    0.126 ms
-erode (both)      :    0.021 ms
-dilate (both)     :    0.013 ms
-gaussian_blur     :    0.011 ms
-sobel             :    0.047 ms
+D2H copies        :    1.732 ms
+color_filter      :    0.209 ms
+erode (both)      :    0.014 ms
+dilate (both)     :    0.014 ms
+gaussian_blur     :    0.010 ms
+sobel             :    0.049 ms
 NMS               :    0.013 ms
 bitwiseAND        :    0.009 ms
-D2H copies        :    0.207 ms
+D2H copies        :    0.206 ms
 -------------------------------
-Total kernels     :    0.000 ms
-Total time        :    0.207 ms
+Total kernels     :    0.318 ms
+Total time        :    2.256 ms
 beginning jpegization
 ending jpegization
 
@@ -26,18 +26,18 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-D2H copies        :    0.000 ms
-color_filter      :    0.122 ms
+D2H copies        :    0.090 ms
+color_filter      :    0.123 ms
 erode (both)      :    0.013 ms
-dilate (both)     :    0.012 ms
+dilate (both)     :    0.013 ms
 gaussian_blur     :    0.010 ms
-sobel             :    0.044 ms
+sobel             :    0.043 ms
 NMS               :    0.011 ms
-bitwiseAND        :    0.008 ms
-D2H copies        :    0.190 ms
+bitwiseAND        :    0.007 ms
+D2H copies        :    0.203 ms
 -------------------------------
-Total kernels     :    0.000 ms
-Total time        :    0.190 ms
+Total kernels     :    0.222 ms
+Total time        :    0.514 ms
 beginning jpegization
 ending jpegization
 
@@ -47,18 +47,18 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-D2H copies        :    0.000 ms
-color_filter      :    0.122 ms
-erode (both)      :    0.013 ms
+D2H copies        :    0.088 ms
+color_filter      :    0.123 ms
+erode (both)      :    0.012 ms
 dilate (both)     :    0.012 ms
 gaussian_blur     :    0.010 ms
-sobel             :    0.042 ms
-NMS               :    0.012 ms
-bitwiseAND        :    0.008 ms
-D2H copies        :    0.208 ms
+sobel             :    0.043 ms
+NMS               :    0.011 ms
+bitwiseAND        :    0.007 ms
+D2H copies        :    0.203 ms
 -------------------------------
-Total kernels     :    0.000 ms
-Total time        :    0.208 ms
+Total kernels     :    0.219 ms
+Total time        :    0.510 ms
 beginning jpegization
 ending jpegization
 
@@ -68,18 +68,18 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-D2H copies        :    0.000 ms
+D2H copies        :    0.086 ms
 color_filter      :    0.123 ms
 erode (both)      :    0.013 ms
 dilate (both)     :    0.012 ms
-gaussian_blur     :    0.010 ms
-sobel             :    0.042 ms
-NMS               :    0.012 ms
+gaussian_blur     :    0.009 ms
+sobel             :    0.041 ms
+NMS               :    0.011 ms
 bitwiseAND        :    0.008 ms
-D2H copies        :    0.203 ms
+D2H copies        :    0.201 ms
 -------------------------------
-Total kernels     :    0.000 ms
-Total time        :    0.203 ms
+Total kernels     :    0.218 ms
+Total time        :    0.505 ms
 beginning jpegization
 ending jpegization
 
@@ -89,17 +89,17 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-D2H copies        :    0.000 ms
-color_filter      :    0.123 ms
-erode (both)      :    0.013 ms
+D2H copies        :    0.084 ms
+color_filter      :    0.122 ms
+erode (both)      :    0.012 ms
 dilate (both)     :    0.012 ms
-gaussian_blur     :    0.010 ms
-sobel             :    0.045 ms
-NMS               :    0.011 ms
-bitwiseAND        :    0.007 ms
-D2H copies        :    0.207 ms
+gaussian_blur     :    0.009 ms
+sobel             :    0.044 ms
+NMS               :    0.012 ms
+bitwiseAND        :    0.009 ms
+D2H copies        :    0.204 ms
 -------------------------------
-Total kernels     :    0.000 ms
-Total time        :    0.207 ms
+Total kernels     :    0.222 ms
+Total time        :    0.510 ms
 beginning jpegization
 ending jpegization

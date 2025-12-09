@@ -9,7 +9,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-#define OUTPUT_FILE_DIRECTORY "img_to_lines/output_images/"
+#define OUTPUT_FILE_DIRECTORY "image_processing_cuda/output_images/"
 
 Image image_utils_load_image(char* file_path_str) {
     Image img = {0};

@@ -36,6 +36,7 @@ void timing_stop(float* ms_event) {
 }
 
 void timing_print_times() {
+    timing_calc_total_kernels();
     printf("\n=== CUDA TIMING (per image) ===\n");
     printf("D2H copies        : %8.3f ms\n", ms_memcpyHD);
     printf("color_filter      : %8.3f ms\n", ms_color);

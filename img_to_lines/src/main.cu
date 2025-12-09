@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
   // copy data onto device
   timing_start();
   cudaMemcpy(device_pixels_in, host_pixels_in, img_size_3chan_c, cudaMemcpyHostToDevice);
-  timing_stop(&ms_color);
+  timing_stop(&ms_memcpyHD);
   //@@ Initialize the grid and block dimensions here
   dim3 DimBlock(BLOCK_SIZE_X, BLOCK_SIZE_Y,1);
   dim3 DimGrid((img.width-1)/BLOCK_SIZE_X+1, (img.height-1) / BLOCK_SIZE_Y+1,1);
