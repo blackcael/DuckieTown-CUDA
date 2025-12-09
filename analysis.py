@@ -148,7 +148,7 @@ def main():
     )
     parser.add_argument(
         "--cuda-log",
-        default="cuda_timing.log",
+        default="cuda_img_processing/cuda_timing.log",
         help="Path to CUDA timing log (default: cuda_timing.log)",
     )
     parser.add_argument(
