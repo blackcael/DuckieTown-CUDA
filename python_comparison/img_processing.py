@@ -198,7 +198,7 @@ def main():
     print(" Average total time per image ")
     print("==============================")
     avg = sum(all_totals) / len(all_totals)
-    print(f"   {avg:.3f} ms (CPU, OpenCV)")
+    print(f"   {avg:.3f} ms (CPU, Python - OpenCV)")
 
     print("\nDone!")
 
