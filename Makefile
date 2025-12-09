@@ -68,13 +68,22 @@ run: $(TARGET)
 # ========= Run ALL images 0–4 =========
 .PHONY: run_all
 run_all: $(TARGET)
-	@rm -f cuda_timing.log;
+	@if [ "$(APPEND)" != "1" ]; then rm -f $(BASE_DIR)/cuda_timing.log; fi
 	@for i in 0 1 2 3 4; do \
 	    echo "=== Running image $$i ==="; \
 	    ./$(TARGET) "$(IMG_DIR)/image$$i.jpg" >> $(BASE_DIR)/cuda_timing.log; \
 	    echo ""; \
 	done
 
+# ========= Run ALL images 0–4 100 Times =========
+.PHONY: run_100
+run_100:
+	@rm -f $(BASE_DIR)/cuda_timing.log;
+	@for n in $(shell seq 1 100); do \
+	    echo "=== Batch $$n ===" >> $(BASE_DIR)/cuda_timing.log; \
+	    $(MAKE) APPEND=1 run_all; \
+	    echo "" >> $(BASE_DIR)/cuda_timing.log; \
+	done
 
 # ========= Clean =========
 .PHONY: clean

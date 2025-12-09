@@ -47,14 +47,16 @@ __global__ void color_filter_kernel(
         // ### Goal 1.0 Filter Color Masks
         // subGoal 1.1 Convert to HSV
         // Normalize to [0,1]
-        float r_0 = r / 255.0f;
-        float g_0 = g / 255.0f;
-        float b_0 = b / 255.0f; 
+        float inv255 = 1.0f / 255.0f;
+        float r_0 = r * inv255;
+        float g_0 = g * inv255;
+        float b_0 = b * inv255; 
 
         // Use MAX3/MIN3 macros with floats
         float c_max   = MAX3(r_0, g_0, b_0);
         float c_min   = MIN3(r_0, g_0, b_0);
         float c_delta = c_max - c_min;  
+        float inv_c_delta = (c_delta > 0.0f) ? (1.0f / c_delta) : 0.0f;
 
         float H, S, V;  
 
@@ -71,13 +73,13 @@ __global__ void color_filter_kernel(
         if (c_delta == 0.0f) {
             H = 0.0f;
         } else if (c_max == r_0) {
-            H = 60.0f * ((g_0 - b_0) / c_delta);
+            H = 60.0f * ((g_0 - b_0) * inv_c_delta);
             if (H < 0.0f)
                 H += 360.0f;
         } else if (c_max == g_0) {
-            H = 60.0f * (((b_0 - r_0) / c_delta) + 2.0f);
+            H = 60.0f * (((b_0 - r_0) * inv_c_delta) + 2.0f);
         } else { // c_max == b_0
-            H = 60.0f * (((r_0 - g_0) / c_delta) + 4.0f);
+            H = 60.0f * (((r_0 - g_0) * inv_c_delta) + 4.0f);
         }
         // cast back to chars (faster!)
         unsigned char H_255 = (char)(H / 360.0f * 255.0f + 0.5f);
@@ -86,28 +88,21 @@ __global__ void color_filter_kernel(
 
         // subGoal 1.2 Filter for Yellow and WHITE
         char isYellow, isWhite;
-        if(H_255 <= YELLOW_UPPER_THRESH_H &&
+        isYellow = (H_255 <= YELLOW_UPPER_THRESH_H &&
            H_255 >= YELLOW_LOWER_THRESH_H &&
            S_255 <= YELLOW_UPPER_THRESH_S &&
            S_255 >= YELLOW_LOWER_THRESH_S &&
            V_255 <= YELLOW_UPPER_THRESH_V &&
            V_255 >= YELLOW_LOWER_THRESH_V
-        ){
-            isYellow = 0xFF;
-        }else{
-            isYellow = 0x00;
-        }
-        if(H_255 <= WHITE_UPPER_THRESH_H &&
+        ) ? 0xFF : 0x00;
+
+        isWhite = (H_255 <= WHITE_UPPER_THRESH_H &&
            H_255 >= WHITE_LOWER_THRESH_H &&
            S_255 <= WHTIE_UPPER_THRESH_S &&
            S_255 >= WHTIE_LOWER_THRESH_S &&
            V_255 <= WHITE_UPPER_THRESH_V &&
            V_255 >= WHITE_LOWER_THRESH_V
-        ){
-            isWhite = 0xFF;
-        }else{
-            isWhite = 0x00;
-        }
+        ) ? 0xFF : 0x00;
 
         yellow_out[pixelIndex] = isYellow;
         white_out[pixelIndex] = isWhite;
