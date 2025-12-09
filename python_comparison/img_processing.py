@@ -139,6 +139,8 @@ def process_image(bgr_img):
         "white": white,
         "blurred": blurred,
         "edges": edges,
+        "yellow_edges" : yellow_edges,
+        "white_edges" : white_edges,
         "timings": timings
     }
 
@@ -192,6 +194,8 @@ def main():
         cv2.imwrite(f"{args.output_dir}/{base}_white.png", out["white"])
         cv2.imwrite(f"{args.output_dir}/{base}_blurred.png", out["blurred"])
         cv2.imwrite(f"{args.output_dir}/{base}_edges.png", out["edges"])
+        cv2.imwrite(f"{args.output_dir}/{base}_yellow_edges.png", out["yellow_edges"])
+        cv2.imwrite(f"{args.output_dir}/{base}_white_edges.png", out["white_edges"])
 
     # Final summary
     print("\n==============================")
