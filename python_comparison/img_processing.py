@@ -115,7 +115,7 @@ def process_image(bgr_img):
     yellow_edges = cv2.bitwise_and(edges, edges, mask=yellow)
     white_edges = cv2.bitwise_and(edges, edges, mask=white)
     t1 = time.perf_counter()
-    timings["canny_ms"] = (t1 - t0) * 1000
+    timings["bitwiseAND_ms"] = (t1 - t0) * 1000
 
     timings["total_ms"] = sum(timings.values())
 

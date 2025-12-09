@@ -1,0 +1,59 @@
+Running Main
+Found 5 images:
+  - sample_images/image0.jpg
+  - sample_images/image1.jpg
+  - sample_images/image2.jpg
+  - sample_images/image3.jpg
+  - sample_images/image4.jpg
+
+=== Processing image0 ===
+Timing (avg over repeats):
+  color_filter_ms   :    1.964 ms
+  bgr2gray_ms       :    0.060 ms
+  gaussian_blur_ms  :    0.098 ms
+  canny_ms          :    0.382 ms
+  bitwiseAND_ms     :    0.409 ms
+  total_ms          :    2.914 ms
+
+=== Processing image1 ===
+Timing (avg over repeats):
+  color_filter_ms   :    0.327 ms
+  bgr2gray_ms       :    0.028 ms
+  gaussian_blur_ms  :    0.044 ms
+  canny_ms          :    0.174 ms
+  bitwiseAND_ms     :    0.219 ms
+  total_ms          :    0.792 ms
+
+=== Processing image2 ===
+Timing (avg over repeats):
+  color_filter_ms   :    0.393 ms
+  bgr2gray_ms       :    0.029 ms
+  gaussian_blur_ms  :    0.049 ms
+  canny_ms          :    0.143 ms
+  bitwiseAND_ms     :    0.161 ms
+  total_ms          :    0.774 ms
+
+=== Processing image3 ===
+Timing (avg over repeats):
+  color_filter_ms   :    0.394 ms
+  bgr2gray_ms       :    0.030 ms
+  gaussian_blur_ms  :    0.051 ms
+  canny_ms          :    0.222 ms
+  bitwiseAND_ms     :    0.233 ms
+  total_ms          :    0.930 ms
+
+=== Processing image4 ===
+Timing (avg over repeats):
+  color_filter_ms   :    0.324 ms
+  bgr2gray_ms       :    0.027 ms
+  gaussian_blur_ms  :    0.046 ms
+  canny_ms          :    0.107 ms
+  bitwiseAND_ms     :    0.129 ms
+  total_ms          :    0.634 ms
+
+==============================
+ Average total time per image 
+==============================
+   1.209 ms (CPU, OpenCV)
+
+Done!
