@@ -1,0 +1,100 @@
+
+ ===== Using File: cuda_img_processing/sample_images/image0.jpg ===== 
+begining kernel
+kernel error: no error
+Finishing kernel
+
+=== CUDA TIMING (per image) ===
+D2H copies        :    1.874 ms
+color_filter      :    0.136 ms
+erode (both)      :    0.014 ms
+dilate (both)     :    0.013 ms
+gaussian_blur     :    0.011 ms
+canny_edges       :    0.061 ms
+bitwiseAND        :    0.008 ms
+D2H copies        :    0.207 ms
+-------------------------------
+Total kernels     :    0.244 ms
+Total time        :    2.325 ms
+beginning jpegization
+ending jpegization
+
+ ===== Using File: cuda_img_processing/sample_images/image1.jpg ===== 
+begining kernel
+kernel error: no error
+Finishing kernel
+
+=== CUDA TIMING (per image) ===
+D2H copies        :    0.089 ms
+color_filter      :    0.124 ms
+erode (both)      :    0.013 ms
+dilate (both)     :    0.012 ms
+gaussian_blur     :    0.010 ms
+canny_edges       :    0.055 ms
+bitwiseAND        :    0.007 ms
+D2H copies        :    0.210 ms
+-------------------------------
+Total kernels     :    0.221 ms
+Total time        :    0.520 ms
+beginning jpegization
+ending jpegization
+
+ ===== Using File: cuda_img_processing/sample_images/image2.jpg ===== 
+begining kernel
+kernel error: no error
+Finishing kernel
+
+=== CUDA TIMING (per image) ===
+D2H copies        :    0.086 ms
+color_filter      :    0.123 ms
+erode (both)      :    0.013 ms
+dilate (both)     :    0.012 ms
+gaussian_blur     :    0.010 ms
+canny_edges       :    0.061 ms
+bitwiseAND        :    0.008 ms
+D2H copies        :    0.205 ms
+-------------------------------
+Total kernels     :    0.226 ms
+Total time        :    0.517 ms
+beginning jpegization
+ending jpegization
+
+ ===== Using File: cuda_img_processing/sample_images/image3.jpg ===== 
+begining kernel
+kernel error: no error
+Finishing kernel
+
+=== CUDA TIMING (per image) ===
+D2H copies        :    0.091 ms
+color_filter      :    0.132 ms
+erode (both)      :    0.013 ms
+dilate (both)     :    0.012 ms
+gaussian_blur     :    0.010 ms
+canny_edges       :    0.054 ms
+bitwiseAND        :    0.007 ms
+D2H copies        :    0.198 ms
+-------------------------------
+Total kernels     :    0.229 ms
+Total time        :    0.517 ms
+beginning jpegization
+ending jpegization
+
+ ===== Using File: cuda_img_processing/sample_images/image4.jpg ===== 
+begining kernel
+kernel error: no error
+Finishing kernel
+
+=== CUDA TIMING (per image) ===
+D2H copies        :    0.084 ms
+color_filter      :    0.121 ms
+erode (both)      :    0.013 ms
+dilate (both)     :    0.012 ms
+gaussian_blur     :    0.010 ms
+canny_edges       :    0.056 ms
+bitwiseAND        :    0.008 ms
+D2H copies        :    0.202 ms
+-------------------------------
+Total kernels     :    0.221 ms
+Total time        :    0.506 ms
+beginning jpegization
+ending jpegization

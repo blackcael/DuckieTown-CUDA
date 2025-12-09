@@ -1,11 +1,11 @@
 # ========= Project Settings =========
 TARGET    := duckietown_img
 
-BASE_DIR  := img_to_lines
+BASE_DIR  := cuda_img_processing
 SRC_DIR   := $(BASE_DIR)/src
 INC_DIR   := $(BASE_DIR)/include
 IMG_DIR   := $(BASE_DIR)/sample_images
-BUILD_DIR := build
+BUILD_DIR := $(BASE_DIR)/build
 
 # ========= Compiler =========
 NVCC := nvcc
@@ -56,10 +56,10 @@ IMG ?= 0
 
 .PHONY: run
 run: $(TARGET)
-	@rm -f cuda_timing.log;
+	@rm -f $(BASE_DIR)/cuda_timing.log;
 	@if [ "$(IMG)" -ge 0 ] && [ "$(IMG)" -le 4 ]; then \
 	    echo "Running with $(IMG_DIR)/image$(IMG).jpg"; \
-	    ./$(TARGET) "$(IMG_DIR)/image$(IMG).jpg" >> cuda_timing.log; \
+	    ./$(TARGET) "$(IMG_DIR)/image$(IMG).jpg" >> $(BASE_DIR)/cuda_timing.log; \
 	else \
 	    echo "ERROR: IMG must be between 0 and 4 (got $(IMG))"; \
 	    exit 1; \
@@ -71,7 +71,7 @@ run_all: $(TARGET)
 	@rm -f cuda_timing.log;
 	@for i in 0 1 2 3 4; do \
 	    echo "=== Running image $$i ==="; \
-	    ./$(TARGET) "$(IMG_DIR)/image$$i.jpg" >> cuda_timing.log; \
+	    ./$(TARGET) "$(IMG_DIR)/image$$i.jpg" >> $(BASE_DIR)/cuda_timing.log; \
 	    echo ""; \
 	done
 
