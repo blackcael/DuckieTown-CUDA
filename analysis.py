@@ -13,6 +13,10 @@ import matplotlib.pyplot as plt
 CPU_LOG_PATH = "python_comparison/python_timing.log"
 CUDA_LOG_PATH = "cuda_img_processing/cuda_timing.log"
 
+TITLE_FONT_SIZE = 20
+LABEL_FONT_SIZE = 16
+ITERATIONS = 100
+
 
 # ---------- Parsing helpers ----------
 
@@ -107,30 +111,67 @@ def plot_comparison(stages, cpu_times, cuda_times, speedups, output_path=None):
     width = 0.35
 
     fig, ax = plt.subplots()
+
     ax.bar(x - width/2, cpu_times, width, label="CPU (Python/OpenCV)", color="tab:blue")
     ax.bar(x + width/2, cuda_times, width, label="CUDA", color="tab:green")
 
-    ax.set_ylabel("Time per image (ms)")
-    ax.set_title("Per-stage timing: CPU vs CUDA (including H2D/D2H memcpy)")
+    # Annotate each CPU/CUDA bar with its ms value (or 'n/a' when missing/zero)
+    for i in range(len(stages)):
+        cpu_val = cpu_times[i]
+        cuda_val = cuda_times[i]
+
+        if isinstance(cpu_val, float) and (not math.isnan(cpu_val)) and cpu_val > 0:
+            cpu_label = f"{cpu_val:.2f}ms"
+            cpu_y = cpu_val * 1.02
+        else:
+            cpu_label = "n/a"
+            cpu_y = 0.01
+
+        if isinstance(cuda_val, float) and (not math.isnan(cuda_val)) and cuda_val > 0:
+            cuda_label = f"{cuda_val:.2f}ms"
+            cuda_y = cuda_val * 1.02
+        else:
+            cuda_label = "n/a"
+            cuda_y = 0.01
+
+        ax.text(
+            x[i] - width/2,
+            cpu_y,
+            cpu_label,
+            ha="center",
+            va="bottom",
+            fontsize=9,
+        )
+        ax.text(
+            x[i] + width/2,
+            cuda_y,
+            cuda_label,
+            ha="center",
+            va="bottom",
+            fontsize=9,
+        )
+
+    ax.set_ylabel("Time per image (ms)", fontsize=LABEL_FONT_SIZE)
+    ax.set_title(f"Per-stage timing: CPU vs CUDA (including H2D/D2H memcpy) over {ITERATIONS} iterations", fontsize=TITLE_FONT_SIZE)
     ax.set_xticks(x)
-    ax.set_xticklabels(stages, rotation=45, ha="right")
+    ax.set_xticklabels(stages, rotation=45, ha="right", fontsize=LABEL_FONT_SIZE)
     ax.legend()
 
     # Annotate speedup above bars
-    for i, s in enumerate(speedups):
-        if math.isnan(s):
-            label = "n/a"
-        else:
-            label = f"{s:.1f}×"
-        ymax = max(cpu_times[i], cuda_times[i])
-        ax.text(
-            x[i],
-            ymax * 1.02 if ymax > 0 else 0.01,
-            label,
-            ha="center",
-            va="bottom",
-            fontsize=8,
-        )
+    # for i, s in enumerate(speedups):
+    #     if math.isnan(s):
+    #         label = "n/a"
+    #     else:
+    #         label = f"{s:.1f}×"
+    #     ymax = max(cpu_times[i], cuda_times[i])
+    #     ax.text(
+    #         x[i],
+    #         ymax * 1.02 if ymax > 0 else 0.01,
+    #         label,
+    #         ha="center",
+    #         va="bottom",
+    #         fontsize=8,
+    #     )
 
     fig.tight_layout()
     if output_path:
@@ -153,10 +194,10 @@ def plot_speedup(stages, speedups, output_path=None):
     fig, ax = plt.subplots()
     ax.bar(x, speedups_plot, color="tab:orange")
 
-    ax.set_ylabel("Speedup (CPU time / CUDA time)")
-    ax.set_title("Per-stage speedup")
+    ax.set_ylabel("Speedup (CPU time / CUDA time)", fontsize=LABEL_FONT_SIZE)
+    ax.set_title(f"Per-stage speedup over {ITERATIONS} iterations", fontsize=TITLE_FONT_SIZE)
     ax.set_xticks(x)
-    ax.set_xticklabels(stages, rotation=45, ha="right")
+    ax.set_xticklabels(stages, rotation=45, ha="right", fontsize=LABEL_FONT_SIZE)
 
     # Sensible y-limit if there are valid speedups
     finite_vals = [s for s in speedups if not math.isnan(s)]
@@ -177,7 +218,7 @@ def plot_speedup(stages, speedups, output_path=None):
             label,
             ha="center",
             va="bottom",
-            fontsize=8,
+            fontsize=LABEL_FONT_SIZE,
         )
 
     fig.tight_layout()
@@ -234,6 +275,11 @@ def main():
 
     # Use the UNION of stages so we can include memcpy-only stages
     all_stages = sorted(set(cpu_canon) | set(cuda_canon))
+
+    # Ensure the overall 'Total time' stage appears as the last bar
+    # in both comparison and speedup plots (keep alphabetical order otherwise)
+    if "Total time" in all_stages:
+        all_stages = [s for s in all_stages if s != "Total time"] + ["Total time"]
     if not all_stages:
         raise SystemExit(
             "No stages found after canonical mapping. "
