@@ -43,8 +43,7 @@ void timing_print_times() {
     printf("erode (both)      : %8.3f ms\n", ms_erode);
     printf("dilate (both)     : %8.3f ms\n", ms_dilate);
     printf("gaussian_blur     : %8.3f ms\n", ms_blur);
-    printf("sobel             : %8.3f ms\n", ms_sobel);
-    printf("NMS               : %8.3f ms\n", ms_NMS);
+    printf("canny_edges       : %8.3f ms\n", ms_sobel + ms_NMS);
     printf("bitwiseAND        : %8.3f ms\n", ms_bitwiseAND);
     printf("D2H copies        : %8.3f ms\n", ms_memcpyDH);
     printf("-------------------------------\n");

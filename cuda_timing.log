@@ -5,18 +5,17 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-D2H copies        :    1.732 ms
-color_filter      :    0.209 ms
+D2H copies        :    0.094 ms
+color_filter      :    0.124 ms
 erode (both)      :    0.014 ms
-dilate (both)     :    0.014 ms
-gaussian_blur     :    0.010 ms
-sobel             :    0.049 ms
-NMS               :    0.013 ms
-bitwiseAND        :    0.009 ms
-D2H copies        :    0.206 ms
+dilate (both)     :    0.013 ms
+gaussian_blur     :    0.011 ms
+canny_edges       :    0.060 ms
+bitwiseAND        :    0.008 ms
+D2H copies        :    0.205 ms
 -------------------------------
-Total kernels     :    0.318 ms
-Total time        :    2.256 ms
+Total kernels     :    0.231 ms
+Total time        :    0.530 ms
 beginning jpegization
 ending jpegization
 
@@ -26,18 +25,17 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-D2H copies        :    0.090 ms
-color_filter      :    0.123 ms
+D2H copies        :    0.091 ms
+color_filter      :    0.125 ms
 erode (both)      :    0.013 ms
 dilate (both)     :    0.013 ms
 gaussian_blur     :    0.010 ms
-sobel             :    0.043 ms
-NMS               :    0.011 ms
+canny_edges       :    0.055 ms
 bitwiseAND        :    0.007 ms
-D2H copies        :    0.203 ms
+D2H copies        :    0.209 ms
 -------------------------------
-Total kernels     :    0.222 ms
-Total time        :    0.514 ms
+Total kernels     :    0.224 ms
+Total time        :    0.524 ms
 beginning jpegization
 ending jpegization
 
@@ -47,18 +45,17 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-D2H copies        :    0.088 ms
-color_filter      :    0.123 ms
-erode (both)      :    0.012 ms
+D2H copies        :    0.085 ms
+color_filter      :    0.121 ms
+erode (both)      :    0.013 ms
 dilate (both)     :    0.012 ms
-gaussian_blur     :    0.010 ms
-sobel             :    0.043 ms
-NMS               :    0.011 ms
+gaussian_blur     :    0.009 ms
+canny_edges       :    0.054 ms
 bitwiseAND        :    0.007 ms
-D2H copies        :    0.203 ms
+D2H copies        :    0.200 ms
 -------------------------------
-Total kernels     :    0.219 ms
-Total time        :    0.510 ms
+Total kernels     :    0.217 ms
+Total time        :    0.503 ms
 beginning jpegization
 ending jpegization
 
@@ -68,18 +65,17 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-D2H copies        :    0.086 ms
-color_filter      :    0.123 ms
-erode (both)      :    0.013 ms
-dilate (both)     :    0.012 ms
+D2H copies        :    0.085 ms
+color_filter      :    0.118 ms
+erode (both)      :    0.012 ms
+dilate (both)     :    0.013 ms
 gaussian_blur     :    0.009 ms
-sobel             :    0.041 ms
-NMS               :    0.011 ms
-bitwiseAND        :    0.008 ms
-D2H copies        :    0.201 ms
+canny_edges       :    0.054 ms
+bitwiseAND        :    0.007 ms
+D2H copies        :    0.197 ms
 -------------------------------
-Total kernels     :    0.218 ms
-Total time        :    0.505 ms
+Total kernels     :    0.214 ms
+Total time        :    0.496 ms
 beginning jpegization
 ending jpegization
 
@@ -89,17 +85,16 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-D2H copies        :    0.084 ms
-color_filter      :    0.122 ms
+D2H copies        :    0.088 ms
+color_filter      :    0.140 ms
 erode (both)      :    0.012 ms
 dilate (both)     :    0.012 ms
-gaussian_blur     :    0.009 ms
-sobel             :    0.044 ms
-NMS               :    0.012 ms
-bitwiseAND        :    0.009 ms
-D2H copies        :    0.204 ms
+gaussian_blur     :    0.010 ms
+canny_edges       :    0.058 ms
+bitwiseAND        :    0.007 ms
+D2H copies        :    0.208 ms
 -------------------------------
-Total kernels     :    0.222 ms
-Total time        :    0.510 ms
+Total kernels     :    0.239 ms
+Total time        :    0.535 ms
 beginning jpegization
 ending jpegization
