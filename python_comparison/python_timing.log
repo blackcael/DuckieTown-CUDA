@@ -8,52 +8,62 @@ Found 5 images:
 
 === Processing image0 ===
 Timing (avg over repeats):
-  color_filter_ms   :    1.964 ms
-  bgr2gray_ms       :    0.060 ms
-  gaussian_blur_ms  :    0.098 ms
-  canny_ms          :    0.382 ms
-  bitwiseAND_ms     :    0.409 ms
-  total_ms          :    2.914 ms
+  color_filter_ms   :    2.445 ms
+  erode_ms          :    7.344 ms
+  dilate_ms         :    0.136 ms
+  bgr2gray_ms       :    0.061 ms
+  gaussian_blur_ms  :    0.097 ms
+  canny_ms          :    0.406 ms
+  bitwiseAND_ms     :    0.370 ms
+  total_ms          :   10.858 ms
 
 === Processing image1 ===
 Timing (avg over repeats):
-  color_filter_ms   :    0.327 ms
-  bgr2gray_ms       :    0.028 ms
+  color_filter_ms   :    0.390 ms
+  erode_ms          :    0.098 ms
+  dilate_ms         :    0.090 ms
+  bgr2gray_ms       :    0.037 ms
   gaussian_blur_ms  :    0.044 ms
-  canny_ms          :    0.174 ms
-  bitwiseAND_ms     :    0.219 ms
-  total_ms          :    0.792 ms
+  canny_ms          :    0.160 ms
+  bitwiseAND_ms     :    0.225 ms
+  total_ms          :    1.044 ms
 
 === Processing image2 ===
 Timing (avg over repeats):
-  color_filter_ms   :    0.393 ms
-  bgr2gray_ms       :    0.029 ms
-  gaussian_blur_ms  :    0.049 ms
-  canny_ms          :    0.143 ms
-  bitwiseAND_ms     :    0.161 ms
-  total_ms          :    0.774 ms
+  color_filter_ms   :    0.571 ms
+  erode_ms          :    0.162 ms
+  dilate_ms         :    0.126 ms
+  bgr2gray_ms       :    0.059 ms
+  gaussian_blur_ms  :    0.060 ms
+  canny_ms          :    0.174 ms
+  bitwiseAND_ms     :    0.159 ms
+  total_ms          :    1.311 ms
 
 === Processing image3 ===
 Timing (avg over repeats):
-  color_filter_ms   :    0.394 ms
-  bgr2gray_ms       :    0.030 ms
-  gaussian_blur_ms  :    0.051 ms
-  canny_ms          :    0.222 ms
-  bitwiseAND_ms     :    0.233 ms
-  total_ms          :    0.930 ms
+  color_filter_ms   :    0.468 ms
+  erode_ms          :    0.119 ms
+  dilate_ms         :    0.153 ms
+  bgr2gray_ms       :    0.056 ms
+  gaussian_blur_ms  :    0.067 ms
+  canny_ms          :    0.169 ms
+  bitwiseAND_ms     :    0.290 ms
+  total_ms          :    1.322 ms
 
 === Processing image4 ===
 Timing (avg over repeats):
-  color_filter_ms   :    0.324 ms
+  color_filter_ms   :    0.333 ms
+  erode_ms          :    0.090 ms
+  dilate_ms         :    0.084 ms
   bgr2gray_ms       :    0.027 ms
-  gaussian_blur_ms  :    0.046 ms
-  canny_ms          :    0.107 ms
+  gaussian_blur_ms  :    0.044 ms
+  canny_ms          :    0.112 ms
   bitwiseAND_ms     :    0.129 ms
-  total_ms          :    0.634 ms
+  total_ms          :    0.820 ms
 
 ==============================
  Average total time per image 
 ==============================
-   1.209 ms (CPU, OpenCV)
+   3.071 ms (CPU, OpenCV)
 
 Done!

@@ -97,6 +97,20 @@ def process_image(bgr_img):
     timings["color_filter_ms"] = (t1 - t0) * 1000
 
     t0 = time.perf_counter()
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    yellow = cv2.erode(yellow, kernel)
+    white = cv2.erode(white, kernel)
+    t1 = time.perf_counter()
+    timings["erode_ms"] = (t1 - t0) * 1000
+
+    t0 = time.perf_counter()
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    yellow = cv2.dilate(yellow, kernel)
+    white = cv2.dilate(white, kernel)
+    t1 = time.perf_counter()
+    timings["dilate_ms"] = (t1 - t0) * 1000
+
+    t0 = time.perf_counter()
     gray = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2GRAY)
     t1 = time.perf_counter()
     timings["bgr2gray_ms"] = (t1 - t0) * 1000
