@@ -1,8 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <cstdio>
-#include <cstdlib>
 
 // - pixels is width * height * 3 bytes
 // - Layout is row-major, interleaved RGB:

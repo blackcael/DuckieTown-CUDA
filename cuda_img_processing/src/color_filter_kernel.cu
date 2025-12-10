@@ -40,17 +40,14 @@ __global__ void color_filter_kernel(
     // Calculate position in image
     if(inRange){
         int pixelIndex = rowIndex * image_width + colIndex;
-        unsigned char r = pixel_array[NUM_CHANNELS * pixelIndex + 0];
-        unsigned char g = pixel_array[NUM_CHANNELS * pixelIndex + 1];
-        unsigned char b = pixel_array[NUM_CHANNELS * pixelIndex + 2];
+     
+        const uchar3* pixels3 = reinterpret_cast<const uchar3*>(pixel_array);
+        uchar3 rgb = pixels3[pixelIndex];
 
-        // ### Goal 1.0 Filter Color Masks
-        // subGoal 1.1 Convert to HSV
-        // Normalize to [0,1]
         float inv255 = 1.0f / 255.0f;
-        float r_0 = r * inv255;
-        float g_0 = g * inv255;
-        float b_0 = b * inv255; 
+        float r_0 = rgb.x * inv255;
+        float g_0 = rgb.y * inv255;
+        float b_0 = rgb.z * inv255; 
 
         // Use MAX3/MIN3 macros with floats
         float c_max   = MAX3(r_0, g_0, b_0);
