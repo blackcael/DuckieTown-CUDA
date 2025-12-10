@@ -67,16 +67,3 @@ __global__ void sobel_filter_kernel(
         angle_out[pixelIndex] = dir;
     }
 }
-        
-
-
-
-// void cuda_sobel_filter_run(
-//     unsigned char* blurred_pixels_in, 
-//     int image_height, 
-//     int image_width,
-//     float* mag_output,
-//     float* angle_output
-// ){
-
-// }

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
+
 #include "image_utils.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -76,6 +78,41 @@ Image image_utils_crop_vertically(Image* input, int new_height) {
     Image result = { width, new_height, channels, new_pixels };
     return result;
 }
+
+unsigned char* image_utils_load_LUT_from_file(const char* path) {
+    FILE* f = fopen(path, "rb");
+    if (!f) {
+        fprintf(stderr, "ERROR: Could not open LUT file: %s\n", path);
+        return NULL;
+    }
+
+    const size_t LUT_SIZE = 256 * 256 * 256; // 16,777,216 bytes
+
+    // Allocate host buffer
+    unsigned char* lut = (unsigned char*)malloc(LUT_SIZE);
+    if (!lut) {
+        fprintf(stderr, "ERROR: Could not allocate host memory for LUT\n");
+        fclose(f);
+        return NULL;
+    }
+
+    // Read all bytes from the file
+    size_t read_bytes = fread(lut, 1, LUT_SIZE, f);
+    fclose(f);
+
+    // Validate that we read exactly the expected amount
+    if (read_bytes != LUT_SIZE) {
+        fprintf(stderr,
+                "ERROR: LUT file read %zu bytes, but expected %zu bytes.\n",
+                read_bytes, LUT_SIZE);
+        free(lut);
+        return NULL;
+    }
+
+    return lut;
+}
+
+
 
 void image_utils_free_image(Image *img) {
     if (img->pixels) {

@@ -1,6 +1,8 @@
 
 #include "image_utils.h"
 #include "color_filter_kernel.cuh"
+#include "color_LUT_kernel.cuh"
+#include "rgb_to_grayscale_kernel.cuh"
 #include "erode_kernel.cuh"
 #include "dilate_kernel.cuh"
 #include "gaussian_blur_kernel.cuh"
@@ -11,6 +13,9 @@
 
 #include <stdio.h>
 #include <string.h>
+
+#define LUT_FILE_PATH "cuda_img_processing/LUT/thresholds_lut.bin"
+
 
 #define BLOCK_SIZE_X 16
 #define BLOCK_SIZE_Y 16

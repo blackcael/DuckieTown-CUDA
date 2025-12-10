@@ -45,9 +45,6 @@ __global__ void gaussian_blur_kernel(
             }
         }
         blurred_pixels_out[pixelIndex] = (unsigned char)(gauss_sum / GAUSSIAN_DENOMINATOR);
-        __syncthreads(); //(1)
-    }else{
-        __syncthreads(); //(1)
     }
     return;
 }
