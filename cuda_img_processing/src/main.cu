@@ -91,6 +91,13 @@ int main(int argc, char *argv[]) {
   cudaMalloc((void **) &device_angle_ws, img_array_size_c);
   cudaMalloc((void **) &device_NMS_mag_ws, img_array_size_f);
 
+  // Load LUT
+  unsigned char* host_color_LUT = image_utils_load_LUT_from_file(LUT_FILE_PATH);
+  unsigned char* device_color_LUT;
+  cudaMalloc((void **) &device_color_LUT, 256 * 256 * 256 * sizeof(unsigned char));
+  cudaMemcpy(device_color_LUT, host_color_LUT, 256 * 256 * 256* sizeof(unsigned char), cudaMemcpyHostToDevice);
+  free(host_color_LUT);
+
   // copy data onto device
   timing_start();
   cudaMemcpy(device_pixels_in, host_pixels_in, img_size_3chan_c, cudaMemcpyHostToDevice);
@@ -100,6 +107,7 @@ int main(int argc, char *argv[]) {
   dim3 DimGrid((img.width-1)/BLOCK_SIZE_X+1, (img.height-1) / BLOCK_SIZE_Y+1,1);
 
   printf("begining kernel\n");
+
 
   //@@ Launch the GPU Kernel here
   timing_start();
