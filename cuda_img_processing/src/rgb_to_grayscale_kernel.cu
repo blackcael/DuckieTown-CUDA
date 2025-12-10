@@ -20,7 +20,7 @@ __global__ void rgb_to_grayscale_kernel(
         unsigned char r = pixel_array[NUM_CHANNELS * pixelIndex + 0];
         unsigned char g = pixel_array[NUM_CHANNELS * pixelIndex + 1];
         unsigned char b = pixel_array[NUM_CHANNELS * pixelIndex + 2];
-        gray_scale_out[pixelIndex] = r * R_WEIGHT + g * G_WEIGHT + b * B_WEIGHT;
+        gray_scale_out[pixelIndex] = (unsigned char)((r * R_WEIGHT + g * G_WEIGHT + b * B_WEIGHT) >> 4);
     }
 }
 
