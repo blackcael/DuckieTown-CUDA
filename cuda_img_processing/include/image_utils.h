@@ -1,6 +1,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <cstdio>
+#include <cstdlib>
+
 // - pixels is width * height * 3 bytes
 // - Layout is row-major, interleaved RGB:
 //   pixel (x, y) starts at index (y * width + x) * 3
@@ -43,9 +46,9 @@ void image_utils_build_output_path(
 // crops image from top down, leaving the bottom up
 Image image_utils_crop_vertically(Image* input_image, int new_height);
 
-void image_utils_free_image(
-    Image* img
-);
+unsigned char* load_LUT_from_file(const char* path);
+
+void image_utils_free_image(Image* img);
 
 #ifdef __cplusplus
 }
