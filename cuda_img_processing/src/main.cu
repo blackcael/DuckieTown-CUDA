@@ -17,6 +17,9 @@
 #define USE_LUT 0
 #define LUT_FILE_PATH "cuda_img_processing/LUT/HSV_LUT.bin"
 
+// IMPORTANT NOTE!
+// There is a 0.2ms delay on whatever kernel is first in the pipeline. no clue why :/
+
 
 #define BLOCK_SIZE_X 16
 #define BLOCK_SIZE_Y 16
@@ -68,7 +71,7 @@ int main(int argc, char *argv[]) {
 
   // allocate host memory
   host_pixels_yellow_out = (unsigned char*)malloc(img_array_size_c);
-  host_pixels_white_out = (unsigned char*)malloc(img_array_size_c);
+  host_pixels_white_out = (unsigned char*)malloc(img_array_si59ze_c);
   host_pixels_gray_scale_out = (unsigned char*)malloc(img_array_size_c);
   host_temp_out_c = (unsigned char*)malloc(img_array_size_c);
   host_temp_out_f = (float*)malloc(img_array_size_f);
