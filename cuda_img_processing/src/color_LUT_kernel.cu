@@ -22,9 +22,12 @@ __global__ void color_LUT_kernel(
     // Calculate position in image
     if(inRange){
         int pixelIndex = rowIndex * image_width + colIndex;
-        unsigned char r = rgb_pixels_in[NUM_CHANNELS * pixelIndex + 0];
-        unsigned char g = rgb_pixels_in[NUM_CHANNELS * pixelIndex + 1];
-        unsigned char b = rgb_pixels_in[NUM_CHANNELS * pixelIndex + 2];
+
+        const uchar3* pixels3 = reinterpret_cast<const uchar3*>(rgb_pixels_in);
+        uchar3 rgb = pixels3[pixelIndex];
+        unsigned char r = rgb.x;
+        unsigned char g = rgb.y;
+        unsigned char b = rgb.z;
         unsigned char lut_val = LUT[r * 256 * 256 + g * 256 + b];
         yellow_out[pixelIndex] = YELLOW_MASK & lut_val;
         white_out[pixelIndex] = WHITE_MASK & lut_val;

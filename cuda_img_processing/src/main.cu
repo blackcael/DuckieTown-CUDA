@@ -14,7 +14,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LUT_FILE_PATH "cuda_img_processing/LUT/thresholds_lut.bin"
+#define USE_LUT 0
+#define LUT_FILE_PATH "cuda_img_processing/LUT/HSV_LUT.bin"
+
+// IMPORTANT NOTE!
+// There is a 0.2ms delay on whatever kernel is first in the pipeline. no clue why :/
 
 
 #define BLOCK_SIZE_X 16
@@ -67,7 +71,7 @@ int main(int argc, char *argv[]) {
 
   // allocate host memory
   host_pixels_yellow_out = (unsigned char*)malloc(img_array_size_c);
-  host_pixels_white_out = (unsigned char*)malloc(img_array_size_c);
+  host_pixels_white_out = (unsigned char*)malloc(img_array_si59ze_c);
   host_pixels_gray_scale_out = (unsigned char*)malloc(img_array_size_c);
   host_temp_out_c = (unsigned char*)malloc(img_array_size_c);
   host_temp_out_f = (float*)malloc(img_array_size_f);
@@ -110,7 +114,43 @@ int main(int argc, char *argv[]) {
 
 
   //@@ Launch the GPU Kernel here
+  #if USE_LUT
+
+  // independent grayscale conversion
   timing_start();
+  rgb_to_grayscale_kernel<<<DimGrid,DimBlock>>>(
+                      device_pixels_in,
+                      img.height,
+                      img.width,
+                      device_pixels_gray_scale_out
+                    );
+  timing_stop(&ms_rgb_to_gray);
+  // color filtering
+  timing_start();
+  color_LUT_kernel<<<DimGrid,DimBlock>>>(
+                      device_pixels_in,
+                      img.height,
+                      img.width,
+                      device_color_LUT,
+                      device_pixels_yellow_out,
+                      device_pixels_white_out
+                    );
+  timing_stop(&ms_color);
+  
+  
+  #else
+  // independent grayscale conversion
+  timing_start();
+  rgb_to_grayscale_kernel<<<DimGrid,DimBlock>>>(
+                      device_pixels_in,
+                      img.height,
+                      img.width,
+                      device_pixels_gray_scale_out
+                    );
+  timing_stop(&ms_rgb_to_gray);
+
+  timing_start();
+  // color filtering
   color_filter_kernel<<<DimGrid,DimBlock>>>(
                       device_pixels_in,
                       img.height,
@@ -120,7 +160,8 @@ int main(int argc, char *argv[]) {
                       device_pixels_gray_scale_out
                     );
   timing_stop(&ms_color);
-
+  #endif 
+  
   //ERODES
   timing_start();
   erode_kernel<<<DimGrid,DimBlock>>>(
@@ -219,7 +260,7 @@ int main(int argc, char *argv[]) {
 
   // Turn pixel arrays into jpegs
   printf("beginning jpegization\n");
-  Image output_image = {img.width, img.height, 1, host_temp_out_c};
+  Image output_image = {img.width, img.height, 1, host_pixels_yellow_out};
   char output_file_path[64];
   image_utils_build_output_path(output_file_path, filepath, 64);
   image_utils_save_jpeg(output_file_path, &output_image, 100);

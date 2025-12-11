@@ -2,6 +2,7 @@
 // ---- Profiling setup ----
 float ms_memcpyHD = 0.0f;
 float ms_color = 0.0f;
+float ms_rgb_to_gray = 0.0f;
 float ms_erode = 0.0f;
 float ms_dilate = 0.0f;
 float ms_blur = 0.0f;
@@ -40,6 +41,7 @@ void timing_print_times() {
     printf("\n=== CUDA TIMING (per image) ===\n");
     printf("H2D copies        : %8.3f ms\n", ms_memcpyHD);
     printf("color_filter      : %8.3f ms\n", ms_color);
+    printf("rbg_to_gray       : %8.3f ms\n", ms_rgb_to_gray);
     printf("erode (both)      : %8.3f ms\n", ms_erode);
     printf("dilate (both)     : %8.3f ms\n", ms_dilate);
     printf("gaussian_blur     : %8.3f ms\n", ms_blur);

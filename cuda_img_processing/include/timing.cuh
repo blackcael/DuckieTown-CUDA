@@ -4,6 +4,7 @@
 
 extern float ms_memcpyHD;
 extern float ms_color;
+extern float ms_rgb_to_gray;
 extern float ms_erode ;
 extern float ms_dilate;
 extern float ms_blur;
