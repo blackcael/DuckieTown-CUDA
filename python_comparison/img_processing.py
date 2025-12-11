@@ -98,15 +98,15 @@ def process_image(bgr_img):
 
     t0 = time.perf_counter()
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    yellow = cv2.erode(yellow, kernel)
-    white = cv2.erode(white, kernel)
+    yellow_eroded = cv2.erode(yellow, kernel)
+    white_eroded = cv2.erode(white, kernel)
     t1 = time.perf_counter()
     timings["erode_ms"] = (t1 - t0) * 1000
 
     t0 = time.perf_counter()
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    yellow = cv2.dilate(yellow, kernel)
-    white = cv2.dilate(white, kernel)
+    yellow_dilated = cv2.dilate(yellow_eroded, kernel)
+    white_dilated = cv2.dilate(white, kernel)
     t1 = time.perf_counter()
     timings["dilate_ms"] = (t1 - t0) * 1000
 
@@ -126,8 +126,8 @@ def process_image(bgr_img):
     timings["canny_ms"] = (t1 - t0) * 1000
 
     t0 = time.perf_counter()
-    yellow_edges = cv2.bitwise_and(edges, edges, mask=yellow)
-    white_edges = cv2.bitwise_and(edges, edges, mask=white)
+    yellow_edges = cv2.bitwise_and(edges, edges, mask=yellow_dilated)
+    white_edges = cv2.bitwise_and(edges, edges, mask=white_dilated)
     t1 = time.perf_counter()
     timings["bitwiseAND_ms"] = (t1 - t0) * 1000
 
@@ -137,6 +137,10 @@ def process_image(bgr_img):
         "gray": gray,
         "yellow": yellow,
         "white": white,
+        "Yellow_dilated": yellow_dilated,
+        "White_dilated": white_dilated,
+        "Yellow_eroded": yellow_eroded,
+        "White_eroded": white_eroded,
         "blurred": blurred,
         "edges": edges,
         "yellow_edges" : yellow_edges,
@@ -192,6 +196,10 @@ def main():
         cv2.imwrite(f"{args.output_dir}/{base}_gray.png", out["gray"])
         cv2.imwrite(f"{args.output_dir}/{base}_yellow.png", out["yellow"])
         cv2.imwrite(f"{args.output_dir}/{base}_white.png", out["white"])
+        cv2.imwrite(f"{args.output_dir}/{base}_yellow_dilated.png", out["Yellow_dilated"])
+        cv2.imwrite(f"{args.output_dir}/{base}_white_dilated.png", out["White_dilated"])
+        cv2.imwrite(f"{args.output_dir}/{base}_yellow_eroded.png", out["Yellow_eroded"])
+        cv2.imwrite(f"{args.output_dir}/{base}_white_eroded.png", out["White_eroded"])
         cv2.imwrite(f"{args.output_dir}/{base}_blurred.png", out["blurred"])
         cv2.imwrite(f"{args.output_dir}/{base}_edges.png", out["edges"])
         cv2.imwrite(f"{args.output_dir}/{base}_yellow_edges.png", out["yellow_edges"])
