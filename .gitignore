@@ -1,2 +1,3 @@
 build/
 duckietown_img
+cuda_timing.log
