@@ -11,7 +11,11 @@ BUILD_DIR := $(BASE_DIR)/build
 NVCC := nvcc
 
 # ========= GPU Architecture =========
-ARCH := -gencode arch=compute_86,code=sm_86
+ARCH := \
+  -gencode arch=compute_86,code=sm_86 \
+  -gencode arch=compute_120,code=sm_120 \
+  -gencode arch=compute_120,code=compute_120
+
 
 # ========= Flags =========
 NVCCFLAGS := -std=c++17 -O2 $(ARCH) -I$(INC_DIR) -rdc=true \

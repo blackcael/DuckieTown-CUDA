@@ -17,6 +17,16 @@
 #define USE_LUT 0
 #define LUT_FILE_PATH "cuda_img_processing/LUT/HSV_LUT.bin"
 
+
+#define CUDA_CHECK(call) do {                              \
+  cudaError_t e = (call);                                  \
+  if (e != cudaSuccess) {                                  \
+    fprintf(stderr, "CUDA error %s:%d: %s\n",              \
+            __FILE__, __LINE__, cudaGetErrorString(e));    \
+    exit(1);                                               \
+  }                                                        \
+} while(0)
+
 // IMPORTANT NOTE!
 // There is a 0.2ms delay on whatever kernel is first in the pipeline. no clue why :/
 
@@ -71,7 +81,7 @@ int main(int argc, char *argv[]) {
 
   // allocate host memory
   host_pixels_yellow_out = (unsigned char*)malloc(img_array_size_c);
-  host_pixels_white_out = (unsigned char*)malloc(img_array_si59ze_c);
+  host_pixels_white_out = (unsigned char*)malloc(img_array_size_c);
   host_pixels_gray_scale_out = (unsigned char*)malloc(img_array_size_c);
   host_temp_out_c = (unsigned char*)malloc(img_array_size_c);
   host_temp_out_f = (float*)malloc(img_array_size_f);
@@ -147,6 +157,8 @@ int main(int argc, char *argv[]) {
                       img.width,
                       device_pixels_gray_scale_out
                     );
+  CUDA_CHECK(cudaGetLastError());
+  CUDA_CHECK(cudaDeviceSynchronize());
   timing_stop(&ms_rgb_to_gray);
 
   timing_start();

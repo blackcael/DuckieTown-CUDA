@@ -5,18 +5,18 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-H2D copies        :    0.084 ms
-color_filter      :    0.023 ms
-rbg_to_gray       :    0.230 ms
-erode (both)      :    0.013 ms
-dilate (both)     :    0.013 ms
-gaussian_blur     :    0.009 ms
-canny_edges       :    0.059 ms
-bitwiseAND        :    0.008 ms
-D2H copies        :    0.201 ms
+H2D copies        :    0.062 ms
+color_filter      :    0.026 ms
+rbg_to_gray       :    0.379 ms
+erode (both)      :    0.015 ms
+dilate (both)     :    0.014 ms
+gaussian_blur     :    0.010 ms
+canny_edges       :    0.043 ms
+bitwiseAND        :    0.010 ms
+D2H copies        :    0.235 ms
 -------------------------------
-Total kernels     :    0.126 ms
-Total time        :    0.411 ms
+Total kernels     :    0.117 ms
+Total time        :    0.413 ms
 beginning jpegization
 ending jpegization
 
@@ -26,18 +26,18 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-H2D copies        :    0.080 ms
+H2D copies        :    0.056 ms
 color_filter      :    0.023 ms
-rbg_to_gray       :    0.238 ms
-erode (both)      :    0.012 ms
-dilate (both)     :    0.013 ms
-gaussian_blur     :    0.009 ms
-canny_edges       :    0.055 ms
-bitwiseAND        :    0.008 ms
-D2H copies        :    0.207 ms
+rbg_to_gray       :    0.334 ms
+erode (both)      :    0.014 ms
+dilate (both)     :    0.012 ms
+gaussian_blur     :    0.010 ms
+canny_edges       :    0.042 ms
+bitwiseAND        :    0.009 ms
+D2H copies        :    0.210 ms
 -------------------------------
-Total kernels     :    0.121 ms
-Total time        :    0.408 ms
+Total kernels     :    0.110 ms
+Total time        :    0.375 ms
 beginning jpegization
 ending jpegization
 
@@ -47,18 +47,18 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-H2D copies        :    0.080 ms
-color_filter      :    0.022 ms
-rbg_to_gray       :    0.149 ms
-erode (both)      :    0.012 ms
-dilate (both)     :    0.012 ms
-gaussian_blur     :    0.008 ms
-canny_edges       :    0.054 ms
-bitwiseAND        :    0.007 ms
-D2H copies        :    0.197 ms
+H2D copies        :    0.059 ms
+color_filter      :    0.024 ms
+rbg_to_gray       :    0.330 ms
+erode (both)      :    0.015 ms
+dilate (both)     :    0.013 ms
+gaussian_blur     :    0.011 ms
+canny_edges       :    0.040 ms
+bitwiseAND        :    0.009 ms
+D2H copies        :    0.244 ms
 -------------------------------
-Total kernels     :    0.115 ms
-Total time        :    0.392 ms
+Total kernels     :    0.112 ms
+Total time        :    0.415 ms
 beginning jpegization
 ending jpegization
 
@@ -68,18 +68,18 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-H2D copies        :    0.080 ms
-color_filter      :    0.026 ms
-rbg_to_gray       :    0.255 ms
-erode (both)      :    0.014 ms
-dilate (both)     :    0.014 ms
+H2D copies        :    0.065 ms
+color_filter      :    0.023 ms
+rbg_to_gray       :    0.364 ms
+erode (both)      :    0.015 ms
+dilate (both)     :    0.015 ms
 gaussian_blur     :    0.010 ms
-canny_edges       :    0.060 ms
-bitwiseAND        :    0.008 ms
-D2H copies        :    0.227 ms
+canny_edges       :    0.042 ms
+bitwiseAND        :    0.009 ms
+D2H copies        :    0.207 ms
 -------------------------------
-Total kernels     :    0.133 ms
-Total time        :    0.441 ms
+Total kernels     :    0.114 ms
+Total time        :    0.386 ms
 beginning jpegization
 ending jpegization
 
@@ -89,17 +89,17 @@ kernel error: no error
 Finishing kernel
 
 === CUDA TIMING (per image) ===
-H2D copies        :    0.077 ms
-color_filter      :    0.021 ms
-rbg_to_gray       :    0.222 ms
-erode (both)      :    0.012 ms
+H2D copies        :    0.058 ms
+color_filter      :    0.023 ms
+rbg_to_gray       :    0.343 ms
+erode (both)      :    0.014 ms
 dilate (both)     :    0.013 ms
-gaussian_blur     :    0.008 ms
-canny_edges       :    0.056 ms
-bitwiseAND        :    0.008 ms
-D2H copies        :    0.191 ms
+gaussian_blur     :    0.011 ms
+canny_edges       :    0.044 ms
+bitwiseAND        :    0.010 ms
+D2H copies        :    0.232 ms
 -------------------------------
-Total kernels     :    0.119 ms
-Total time        :    0.386 ms
+Total kernels     :    0.115 ms
+Total time        :    0.406 ms
 beginning jpegization
 ending jpegization
